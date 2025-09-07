@@ -47,42 +47,6 @@ class Data:
             params
         )
         conn.commit()
-    
-    @staticmethod
-    def create_indicador_cooperativa(cursor, conn):
-        files = Data.read_files()
-
-        # Load all the cooperative's IDs in a dict
-        cursor.execute("SELECT ID_cooperativa, nombre FROM cooperativa")
-        coop_map = {name: cid for cid, name in cursor.fetchall()}
-
-        # the same with indicators
-        cursor.execute("SELECT ID_indicador, nombre FROM indicador")
-        ind_map = {name: iid for iid, name in cursor.fetchall()}
-
-        inserts = []
-        for df in files:
-            coop_names = df.columns[3:].tolist()
-
-            for _, row in df.iterrows():
-                indicador_nombre = row["índice CAMEL"]
-                if indicador_nombre not in ind_map:
-                    continue
-                id_indicador = ind_map[indicador_nombre]
-
-                for coop in coop_names:
-                    if coop not in coop_map:
-                        continue
-                    id_coop = coop_map[coop]
-                    inserts.append((id_indicador, id_coop))
-
-            # Insert relations without duplicates
-            cursor.executemany("""
-                INSERT IGNORE INTO indicador_cooperativa (ID_indicador, ID_cooperativa)
-                VALUES (%s, %s)
-            """, inserts)
-
-        conn.commit()
 
     @staticmethod
     def create_registros(cursor, conn):
