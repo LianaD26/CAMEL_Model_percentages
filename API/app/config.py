@@ -1,0 +1,1 @@
+DATABASE_URL = "mysql+mysqlconnector://readonly:lectura_segura@camel-model25-limadio-5956.j.aivencloud.com:16156/camel_model?ssl_ca=/ruta/al/ca.pem"
