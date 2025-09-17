@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float
-from app.database import Base
+from API.app.database import Base
 
 class Camel(Base):
     __tablename__ = "camel"

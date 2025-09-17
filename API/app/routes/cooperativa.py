@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
-from app.database import get_db
-from app.models.cooperativa import Cooperativa
-from app.schemas.cooperativa import CooperativaSchema
+from API.app.database import get_db
+from API.app.models.cooperativa import Cooperativa
+from API.app.schemas.cooperativa import CooperativaSchema
 
 router = APIRouter(prefix="/cooperativas", tags=["cooperativas"])
 

@@ -6,7 +6,7 @@ class Data:
         assets = pd.read_csv("tablas/Assets.csv")
         capital = pd.read_csv("tablas/Capital.csv")
         earnings = pd.read_csv("tablas/Earnings.csv")
-        liquidicy = pd.read_csv("tablas/Liquidicy.csv")
+        liquidicy = pd.read_csv("tablas/Liquidity.csv")
         managerial = pd.read_csv("tablas/Managerial.csv")
 
         return capital, assets, managerial, earnings, liquidicy
@@ -15,7 +15,7 @@ class Data:
     def create_camel(cursor, conn):
         cursor.execute("""
             INSERT IGNORE INTO camel (nombre)
-            VALUES ('Capital'), ('Assets'), ('Earnings'), ('Liquidicy'), ('Managerial');
+            VALUES ('Capital'), ('Assets'), ('Managerial'), ('Earnings'), ('Liquidity');
         """)
         conn.commit()
     
