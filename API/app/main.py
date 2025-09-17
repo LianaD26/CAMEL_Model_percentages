@@ -15,10 +15,10 @@ app.add_middleware(
 def root():
     return{"message": "Bienvenido a mi API con FastAPI 🚀"}
 
-from app.routes.camel import router as camel_router
-from app.routes.cooperativa import router as cooperativa_router
-from app.routes.indicador import router as indicador_router
-from app.routes.registro import router as registro_router
+from API.app.routes.camel import router as camel_router
+from API.app.routes.cooperativa import router as cooperativa_router
+from API.app.routes.indicador import router as indicador_router
+from API.app.routes.registro import router as registro_router
 
 
 app.include_router(camel_router)
