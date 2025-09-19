@@ -1,0 +1,12 @@
+# Framework principal
+fastapi
+uvicorn[standard]
+
+# ORM y base de datos
+sqlalchemy
+
+# Validación de datos
+pydantic
+
+# Variables de entorno (opcional pero recomendado)
+python-dotenv

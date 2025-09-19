@@ -1,4 +1,4 @@
 resultados/
 API/app/config.py
 __pycache__/
-tablas/**/*.csv         
+tablas/**/*.csv        
