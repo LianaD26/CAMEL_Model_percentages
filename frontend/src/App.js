@@ -1,5 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import './App.css';
+
+const API_URL = process.env.REACT_APP_API_URL;
 
 const MESES = [
   'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -14,7 +17,7 @@ function App() {
   const [riesgos, setRiesgos] = useState({});
 
   useEffect(() => {
-    fetch('http://localhost:8000/cooperativas/')
+    fetch(`${API_URL}/cooperativas/`)
       .then(res => res.json())
       .then(data => setCooperativas(data))
       .catch(() => setCooperativas([]));
@@ -25,7 +28,7 @@ function App() {
     if (!cooperativa || !year) return;
     try {
       const res = await fetch(
-        `http://localhost:8000/registros/completo/?cooperativa_nombre=${cooperativa}&year=${year}`
+        `${API_URL}/registros/completo/?cooperativa_nombre=${cooperativa}&year=${year}`
       );
       const result = await res.json();
       setData(result);
