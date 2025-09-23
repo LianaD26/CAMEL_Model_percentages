@@ -1,4 +1,6 @@
 resultados/
 API/app/config.py
 __pycache__/
-tablas/**/*.csv        
+tablas/**/*.csv
+web_scraping/Data_historico/
+web_scraping/*.xlsx
