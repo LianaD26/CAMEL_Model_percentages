@@ -2,3 +2,4 @@
 resultados/
 API/app/config.py
 __pycache__/
+.env
