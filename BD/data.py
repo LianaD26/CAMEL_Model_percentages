@@ -3,11 +3,14 @@ import pandas as pd
 class Data:
     @staticmethod
     def read_files():
-        assets = pd.read_csv("tablas/Assets.csv")
-        capital = pd.read_csv("tablas/Capital.csv")
-        earnings = pd.read_csv("tablas/Earnings.csv")
-        liquidicy = pd.read_csv("tablas/Liquidity.csv")
-        managerial = pd.read_csv("tablas/Managerial.csv")
+        import os
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        tablas_dir = os.path.join(base_dir, "tablas")
+        assets = pd.read_csv(os.path.join(tablas_dir, "Assets.csv"))
+        capital = pd.read_csv(os.path.join(tablas_dir, "Capital.csv"))
+        earnings = pd.read_csv(os.path.join(tablas_dir, "Earnings.csv"))
+        liquidicy = pd.read_csv(os.path.join(tablas_dir, "Liquidity.csv"))
+        managerial = pd.read_csv(os.path.join(tablas_dir, "Managerial.csv"))
 
         return capital, assets, managerial, earnings, liquidicy
     
