@@ -6,6 +6,7 @@ import './App.css';
 
 function App() {
     // El basename debe coincidir con el nombre del repositorio
+    // En este caso, el nombre del repositorio es "CAMEL_Model_percentages"
     const basename = '/CAMEL_Model_percentages';
     return (
         <Router basename={basename}>
