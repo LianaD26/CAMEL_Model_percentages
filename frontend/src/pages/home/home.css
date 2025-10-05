@@ -1,0 +1,107 @@
+.search-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.search-form select,
+.search-form input {
+    padding: 0.75rem;
+    border: 2px solid #333333;
+    border-radius: 4px;
+    font-size: 1rem;
+    min-width: 200px;
+}
+
+.search-form select:focus,
+.search-form input:focus {
+    outline: none;
+    border-color: #5DADE2;
+    box-shadow: 0 0 0 3px rgba(93, 173, 226, 0.3);
+}
+
+.button-group {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.search-form button[type="submit"] {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #001F3F 0%, #5DADE2 100%);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.search-form button[type="submit"]:hover {
+    background: linear-gradient(135deg, #5DADE2 0%, #001F3F 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 31, 63, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .search-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .button-group {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .search-form select,
+    .search-form input {
+        min-width: 100%;
+    }
+}
+
+
+.riesgo-alto {
+    background-color: #ff4444 !important;
+    color: white !important;
+    font-weight: bold;
+}
+
+/* Riesgo Medio Alto - Naranja */
+.riesgo-medio-alto {
+    background-color: #ff8800 !important;
+    color: white !important;
+    font-weight: bold;
+}
+
+/* Riesgo Medio Bajo - Amarillo */
+.riesgo-medio-bajo {
+    background-color: #ffcc00 !important;
+    color: black !important;
+    font-weight: bold;
+}
+
+/* Riesgo Bajo - Verde */
+.riesgo-bajo {
+    background-color: #44aa44 !important;
+    color: white !important;
+    font-weight: bold;
+}
+
+/* Efecto hover para las celdas con riesgo */
+.riesgo-alto:hover,
+.riesgo-medio-alto:hover,
+.riesgo-medio-bajo:hover,
+.riesgo-bajo:hover {
+    opacity: 0.8;
+    cursor: pointer;
+}
