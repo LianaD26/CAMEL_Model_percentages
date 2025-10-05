@@ -1,0 +1,168 @@
+/* Contenedor principal del menú - VERSIÓN COMPACTA */
+.menu-nav-container {
+    position: relative;
+    background: linear-gradient(135deg, #001F3F 0%, #5DADE2 100%);
+    padding: 6px 10px; /* Muy reducido */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px; /* Gap pequeño */
+    border-radius: 6px;
+    margin-bottom: 10px;
+    width: fit-content; /* Solo el ancho necesario */
+    max-width: 200px; /* Ancho máximo pequeño */
+}
+
+/* Ícono del menú hamburger - MÁS PEQUEÑO */
+.menu-icon {
+    font-size: 18px; /* Reducido significativamente */
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 4px;
+    border-radius: 3px;
+}
+
+.menu-icon:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05); /* Efecto más sutil */
+}
+
+/* Botón adicional de toggle - MÁS COMPACTO */
+.menu-nav-container button {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid white; /* Border más delgado */
+    color: white;
+    padding: 4px 8px; /* Muy reducido */
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 12px; /* Texto más pequeño */
+    transition: all 0.3s ease;
+    margin-left: 0;
+    white-space: nowrap; /* Evita que el texto se rompa */
+}
+
+.menu-nav-container button:hover {
+    background: white;
+    color: #001F3F;
+    transform: translateY(-1px); /* Movimiento más sutil */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Lista del menú desplegable */
+.menu-nav-container ul {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    list-style: none;
+    padding: 0;
+    margin: 5px 0 0 0; /* Margin reducido */
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    z-index: 1000;
+    animation: slideDown 0.2s ease; /* Animación más rápida */
+    min-width: 150px; /* Ancho mínimo para el dropdown */
+}
+
+/* Animación de entrada del menú */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Items del menú */
+.menu-nav-container li {
+    display: block;
+    margin: 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.menu-nav-container li:last-child {
+    border-bottom: none;
+}
+
+/* Enlaces del menú - MÁS COMPACTOS */
+.menu-nav-container a {
+    display: block;
+    padding: 10px 15px; /* Padding reducido */
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    font-size: 14px; /* Texto más pequeño */
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.menu-nav-container a:hover {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    color: #001F3F;
+    padding-left: 25px; /* Menos desplazamiento */
+    text-decoration: none;
+}
+
+.menu-nav-container a:hover::before {
+    content: "→";
+    position: absolute;
+    left: 10px;
+    color: #5DADE2;
+    font-weight: bold;
+}
+
+.menu-nav-container a.active {
+    background: linear-gradient(135deg, #001F3F 0%, #5DADE2 100%);
+    color: white;
+    font-weight: bold;
+}
+
+.menu-nav-container a.active:hover {
+    background: linear-gradient(135deg, #5DADE2 0%, #001F3F 100%);
+    color: white;
+    padding-left: 15px;
+}
+
+/* Estilos responsivos */
+@media screen and (max-width: 768px) {
+    .menu-nav-container {
+        padding: 8px 12px;
+        flex-direction: column;
+        align-items: stretch;
+        max-width: 180px;
+    }
+    
+    .menu-nav-container button {
+        margin-left: 0;
+        margin-top: 6px;
+        width: 100%;
+        font-size: 11px;
+    }
+    
+    .menu-nav-container ul {
+        position: static;
+        margin-top: 8px;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+    }
+}
+
+/* Estados de focus para accesibilidad */
+.menu-icon:focus,
+.menu-nav-container button:focus,
+.menu-nav-container a:focus {
+    outline: 2px solid #5DADE2;
+    outline-offset: 2px;
+}
+
+/* Efecto de pulso en el ícono */
+.menu-icon:active {
+    transform: scale(0.95);
+}
