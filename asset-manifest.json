@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/CAMEL_Model_percentages/static/css/main.a0a58181.css",
-    "main.js": "/CAMEL_Model_percentages/static/js/main.027b8e8d.js",
+    "main.js": "/CAMEL_Model_percentages/static/js/main.5e66941b.js",
     "static/js/453.670e15c7.chunk.js": "/CAMEL_Model_percentages/static/js/453.670e15c7.chunk.js",
     "index.html": "/CAMEL_Model_percentages/index.html",
     "main.a0a58181.css.map": "/CAMEL_Model_percentages/static/css/main.a0a58181.css.map",
-    "main.027b8e8d.js.map": "/CAMEL_Model_percentages/static/js/main.027b8e8d.js.map",
+    "main.5e66941b.js.map": "/CAMEL_Model_percentages/static/js/main.5e66941b.js.map",
     "453.670e15c7.chunk.js.map": "/CAMEL_Model_percentages/static/js/453.670e15c7.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.a0a58181.css",
-    "static/js/main.027b8e8d.js"
+    "static/js/main.5e66941b.js"
   ]
 }
