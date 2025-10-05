@@ -69,7 +69,8 @@ const Tablero = ({ columnas, datos, obtenerClaseRiesgo, onRiesgoChange }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {datos.map((fila, filaIndex) => (
+                        {datos.filter(fila => fila.Indicador !== "Indicador de Riesgo de Liquidez - IRL" && fila.Indicador !== "Relación Solvencia")
+                            .map((fila, filaIndex) => (
                             <tr key={filaIndex}>
                                 {columnas.map((columna, colIndex) => (
                                     <td 
