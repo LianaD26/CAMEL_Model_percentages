@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FaBars, FaTimes } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 import './Menu.css';
 
 const Menu = () => {
@@ -17,8 +18,8 @@ const Menu = () => {
             
             {isOpen && (
                 <ul className="menu-list">
-                    <li><a href="/">🏠 Home</a></li>
-                    <li><a href="/page2">📊 IRL y Solvencia</a></li>
+                    <li><Link to="/">🏠 Home</Link></li>
+                    <li><Link to="/page2">📊 IRL y Solvencia</Link></li>
                 </ul>
             )}
         </div>
