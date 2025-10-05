@@ -5,9 +5,10 @@ import Page2 from "./pages/page2";
 import './App.css';
 
 function App() {
-    const basename = '/';
+    // El basename debe coincidir con el nombre del repositorio
+    const basename = '/CAMEL_Model_percentages';
     return (
-        <Router>
+        <Router basename={basename}>
             <div className="App">
                 <Routes>
                     <Route path="/" element={<Home />} />
