@@ -72,36 +72,23 @@
 
 .riesgo-alto {
     background-color: #ff4444 !important;
-    color: white !important;
     font-weight: bold;
 }
 
 /* Riesgo Medio Alto - Naranja */
 .riesgo-medio-alto {
     background-color: #ff8800 !important;
-    color: white !important;
     font-weight: bold;
 }
 
 /* Riesgo Medio Bajo - Amarillo */
 .riesgo-medio-bajo {
     background-color: #ffcc00 !important;
-    color: black !important;
     font-weight: bold;
 }
 
 /* Riesgo Bajo - Verde */
 .riesgo-bajo {
     background-color: #44aa44 !important;
-    color: white !important;
     font-weight: bold;
-}
-
-/* Efecto hover para las celdas con riesgo */
-.riesgo-alto:hover,
-.riesgo-medio-alto:hover,
-.riesgo-medio-bajo:hover,
-.riesgo-bajo:hover {
-    opacity: 0.8;
-    cursor: pointer;
 }
