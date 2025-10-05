@@ -1,0 +1,108 @@
+.tablero-container {
+  display: block; /* Cambiado de inline-block a block */
+  width: 100%; /* Ocupa todo el ancho disponible */
+  padding: 20px;
+  background: #FFFFFF; /* Fondo blanco (base limpia) */
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 31, 63, 0.2); /* Sombra con tono azul marino */
+  overflow-x: auto; /* Scroll horizontal si es necesario */
+  box-sizing: border-box; /* Incluye padding en el ancho total */
+  border: 2px solid #001F3F; /* Borde azul marino (confianza) */
+}
+
+.tablero-table {
+  width: 100%; /* Usa todo el ancho del contenedor */
+  border-collapse: collapse;
+  white-space: nowrap; /* Evita que el texto se rompa */
+  background-color: #FFFFFF; /* Fondo blanco para la tabla */
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.tablero-table th,
+.tablero-table td {
+  padding: 12px 15px;
+  border: 1px solid #333333; /* Borde gris oscuro (acento/fuerza) */
+  text-align: center;
+}
+
+.tablero-table th {
+  background: #001F3F; /* Encabezados azul marino (confianza) */
+  color: #FFFFFF; /* Texto blanco */
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Sombra negra */
+}
+
+.tablero-table td {
+  background-color: #FFFFFF; /* Fondo blanco (base limpia) */
+  color: #333333; /* Texto gris oscuro (acento/fuerza) */
+}
+
+.tablero-table tr:nth-child(even) td {
+  background-color: rgba(93, 173, 226, 0.1); /* Filas alternadas con tono azul claro suave */
+}
+
+.tablero-table tr:hover td {
+  background-color: #5DADE2; /* Hover azul claro (energía sutil) */
+  color: #FFFFFF; /* Texto blanco en hover */
+  transition: all 0.3s ease;
+}
+
+/* Las celdas con clases de riesgo mantienen su color en hover */
+.tablero-table tr:hover td.riesgo-alto,
+.tablero-table tr:hover td.riesgo-medio-alto,
+.tablero-table tr:hover td.riesgo-medio-bajo,
+.tablero-table tr:hover td.riesgo-bajo {
+  background-color: inherit !important;
+  color: inherit !important;
+  opacity: 0.8;
+}
+
+/* Estilo especial para la primera columna (Tipo) */
+.tablero-table td:first-child {
+  background-color: #001F3F !important; /* Primera columna azul marino (confianza) */
+  color: #FFFFFF; /* Texto blanco */
+  font-weight: bold;
+}
+
+.tablero-table tr:hover td:first-child {
+  background-color: #5DADE2; /* Azul claro en hover (energía sutil) */
+  color: #FFFFFF;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .tablero-container {
+    padding: 15px;
+    margin: 10px;
+  }
+  
+  .tablero-table th,
+  .tablero-table td {
+    padding: 8px 10px;
+    font-size: 0.875rem;
+  }
+}
+
+/* Scroll personalizado para el contenedor */
+.tablero-container::-webkit-scrollbar {
+  height: 8px;
+/* Scroll personalizado para el contenedor */
+.tablero-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.tablero-container::-webkit-scrollbar-track {
+  background: rgba(93, 173, 226, 0.2); /* Track con tono azul claro suave */
+  border-radius: 4px;
+}
+
+.tablero-container::-webkit-scrollbar-thumb {
+  background: #001F3F; /* Thumb azul marino (confianza) */
+  border-radius: 4px;
+}
+
+.tablero-container::-webkit-scrollbar-thumb:hover {
+  background: #5DADE2; /* Hover azul claro (energía sutil) */
+}
+}
