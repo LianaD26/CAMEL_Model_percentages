@@ -1,0 +1,60 @@
+.header-container {
+  background: linear-gradient(135deg, #001F3F 0%, #5DADE2 100%); /* Gradiente azul marino a azul claro */
+  padding: 2rem 1rem;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 31, 63, 0.3); /* Sombra con color azul marino */
+  margin-bottom: 2rem;
+  border-bottom: 3px solid #333333; /* Borde gris oscuro (acento/fuerza) */
+  position: relative;
+}
+
+.title-container {
+  margin-bottom: 1rem;
+}
+
+.main-header {
+  color: white;
+  font-size: 2rem;
+  margin: 0;
+  font-weight: bold;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3); /* Sombra de texto para mejor legibilidad */
+}
+
+.menu-container {
+  position: absolute;
+  top: 1rem;
+  right: 1rem; /* Separación del borde derecho */
+  z-index: 1000; /* Asegura que esté por encima de otros elementos */
+}
+
+/* Asegurar que el menú desplegable no se salga de la pantalla */
+.menu-container .menu-nav-container {
+  position: relative;
+}
+
+.menu-container .menu-nav-container ul {
+  position: absolute;
+  top: 100%;
+  right: 0; /* Alinea el dropdown al lado derecho del botón */
+  left: auto; /* Anula el left: 0 que pueda estar en Menu.css */
+  min-width: 200px; /* Ancho mínimo para el dropdown */
+  max-width: 250px; /* Ancho máximo */
+  white-space: nowrap; /* Evita que el texto se rompa */
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  .header-container {
+    padding: 1.5rem 1rem;
+  }
+  
+  .main-header {
+    font-size: 1.5rem;
+  }
+  
+  .menu-container {
+    position: static;
+    margin-top: 1rem;
+    text-align: center;
+  }
+}
