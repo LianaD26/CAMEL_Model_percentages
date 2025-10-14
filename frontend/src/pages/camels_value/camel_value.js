@@ -8,9 +8,13 @@ const API_URL = process.env.REACT_APP_API_URL;
 const CamelValue = () => {
     const [cooperativa, setCooperativa] = useState(localStorage.getItem('cooperativaSeleccionada') || '');
     const [ano, setAno] = useState(localStorage.getItem('anoSeleccionado') || '');
-    const columnas = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 
-                    'Junio','Julio', 'Agosto', 'Septiembre', 'Octubre', 
-                    'Noviembre', 'Diciembre','promedio'];
+
+    const porcentajes_camels=[]
+
+    const calificaciones=[]
+
+    const valoresCamel = []
+
     return (
         <div className="camel-value-page">
             <Header title="Valor de CAMEL mensual" />

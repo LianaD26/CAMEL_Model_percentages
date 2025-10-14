@@ -6,9 +6,13 @@ import './page2.css';
 const API_URL = process.env.REACT_APP_API_URL;
 
 const Page2 = () => {
-    // traer cooperativa y año seleccionados del localStorage
-    const cooperativaSeleccionada = localStorage.getItem('cooperativaSeleccionada') || 'No seleccionada';
-    const anoSeleccionado = localStorage.getItem('anoSeleccionado') || 'No seleccionado';
+    // Estados para cooperativa y año
+    const [cooperativa, setCooperativa] = useState(localStorage.getItem('cooperativaSeleccionada') || '');
+    const [ano, setAno] = useState(localStorage.getItem('anoSeleccionado') || '');
+    
+    // Estados para las listas de cooperativas y años
+    const [cooperativas, setCooperativas] = useState([]);
+    const [anios, setAnios] = useState([]);
     
     // Estados para los datos de IRL y Solvencia
     const [datosIrl, setDatosIrl] = useState({
@@ -20,10 +24,6 @@ const Page2 = () => {
         enero: '0', febrero: '0', marzo: '0', abril: '0', mayo: '0', junio: '0',
         julio: '0', agosto: '0', septiembre: '0', octubre: '0', noviembre: '0', diciembre: '0'
     });
-
-    // Estados para cooperativa y año
-    const [cooperativa, setCooperativa] = useState(localStorage.getItem('cooperativaSeleccionada') || '');
-    const [ano, setAno] = useState(localStorage.getItem('anoSeleccionado') || '');
 
     // Función para calcular promedio (sin redondeo, solo para cálculo)
     const calcularPromedio = (datos) => {
@@ -107,6 +107,7 @@ const Page2 = () => {
             solvencia: datosSolvencia
         };
         localStorage.setItem('indicadoresIRL_SOLV', JSON.stringify(datosGuardados));
+        alert(`Datos guardados exitosamente para ${cooperativa} - ${ano}`);
     };
 
     // extraer datos guardados al montar
@@ -129,9 +130,31 @@ const Page2 = () => {
         }
     };
 
+    // Cargar cooperativas y años al montar el componente
     useEffect(() => {
-    extraerDatosGuardados();
+        fetch(`${API_URL}/cooperativas/`)
+            .then(res => res.json())
+            .then(setCooperativas)
+            .catch(() => setCooperativas([]));
+
+        fetch(`${API_URL}/anos/`)
+            .then(res => res.json())
+            .then(data => setAnios(data.anos || []))
+            .catch(() => setAnios([]));
     }, []);
+
+    // Guardar selección en localStorage cuando cambien
+    useEffect(() => {
+        if (cooperativa) localStorage.setItem('cooperativaSeleccionada', cooperativa);
+        if (ano) localStorage.setItem('anoSeleccionado', ano);
+    }, [cooperativa, ano]);
+
+    // Extraer datos guardados cuando cambien cooperativa o año
+    useEffect(() => {
+        if (cooperativa && ano) {
+            extraerDatosGuardados();
+        }
+    }, [cooperativa, ano]);
 
     return (
         <div className="irl-solvencia-container"> 
@@ -140,8 +163,31 @@ const Page2 = () => {
             <div className="input-section">
 
                 <div className='info-selected-and-saved'>
-                    <h3>Cooperativa Seleccionada: {cooperativaSeleccionada}</h3>
-                    <h3>Año: {anoSeleccionado}</h3>
+                    <h3>Seleccione Cooperativa y Año:</h3>
+                    <div className="search-form">
+                        <select
+                            value={cooperativa}
+                            onChange={e => setCooperativa(e.target.value)}
+                            required
+                        >
+                            <option value="">Seleccione una cooperativa</option>
+                            {cooperativas.map(c => (
+                                <option key={c.ID_cooperativa} value={c.nombre}>
+                                    {c.nombre}
+                                </option>
+                            ))}
+                        </select>
+                        <select
+                            value={ano}
+                            onChange={e => setAno(e.target.value)}
+                            required
+                        >
+                            <option value="">Seleccione un año</option>
+                            {anios.map((a, index) => (
+                                <option key={index} value={a}>{a}</option>
+                            ))}
+                        </select>
+                    </div>
                     <button onClick={guardarDatos}>Guardar Datos</button>
                 </div>
 

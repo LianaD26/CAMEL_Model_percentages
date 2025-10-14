@@ -6,10 +6,8 @@ import './home.css';
 const API_URL = process.env.REACT_APP_API_URL;
 
 const Home = () => {
-    const [cooperativa, setCooperativa] = useState(() => localStorage.getItem('cooperativaSeleccionada') || '');
-    const [cooperativas, setCooperativas] = useState([]);
-    const [year, setYear] = useState(() => localStorage.getItem('anoSeleccionado') || '');
-    const [anios, setAnios] = useState([]);
+    const [cooperativa, setCooperativa] = useState(() => localStorage.getItem('cooperativaSeleccionada') || 'No seleccionada');
+    const [year, setYear] = useState(() => localStorage.getItem('anoSeleccionado') || 'No seleccionado');
     const [datos, setDatos] = useState(() => {
         const datosGuardados = localStorage.getItem('datosTabla');
         return datosGuardados ? JSON.parse(datosGuardados) : [];
@@ -28,25 +26,31 @@ const Home = () => {
     };
 
 
-    // Cargar cooperativas y años al montar
+    // Sincronizar cooperativa y año desde localStorage
     useEffect(() => {
-        fetch(`${API_URL}/cooperativas/`)
-            .then(res => res.json())
-            .then(setCooperativas)
-            .catch(() => setCooperativas([]));
+        const handleStorageUpdate = () => {
+            setCooperativa(localStorage.getItem('cooperativaSeleccionada') || 'No seleccionada');
+            setYear(localStorage.getItem('anoSeleccionado') || 'No seleccionado');
+        };
 
-        fetch(`${API_URL}/anos/`)
-            .then(res => res.json())
-            .then(data => setAnios(data.anos || []))
-            .catch(() => setAnios([]));
+        // Escuchar cambios en localStorage
+        window.addEventListener('storage', handleStorageUpdate);
+        
+        // También verificar cambios periódicamente (para cambios en la misma pestaña)
+        const interval = setInterval(handleStorageUpdate, 1000);
+
+        return () => {
+            window.removeEventListener('storage', handleStorageUpdate);
+            clearInterval(interval);
+        };
     }, []);
 
-    // Guardar datos y selección en localStorage
+    // Guardar datos en localStorage cuando cambien
     useEffect(() => {
-        localStorage.setItem('datosTabla', JSON.stringify(datos));
-        localStorage.setItem('cooperativaSeleccionada', cooperativa);
-        localStorage.setItem('anoSeleccionado', year);
-    }, [datos, cooperativa, year]);
+        if (datos.length > 0) {
+            localStorage.setItem('datosTabla', JSON.stringify(datos));
+        }
+    }, [datos]);
 
     // Función para aplicar indicadores guardados
     const aplicarIndicadoresGuardados = () => {
@@ -186,97 +190,15 @@ const Home = () => {
         return '';
     };
 
-    // Consultar datos
-    const fetchData = async (e) => {
-        e.preventDefault();
-        if (!cooperativa || !year) return;
-
-        try {
-            const res = await fetch(
-                `${API_URL}/registros/completo/?cooperativa_nombre=${cooperativa}&year=${year}`
-            );
-            const result = await res.json();
-
-            const agrupados = {};
-            result.forEach(row => {
-                const key = row.nombre_camel + '|' + row.nombre_indicador;
-                if (!agrupados[key]) {
-                    agrupados[key] = {
-                        Tipo: row.nombre_camel,
-                        Indicador: row.nombre_indicador,
-                        Enero: null, Febrero: null, Marzo: null, Abril: null,
-                        Mayo: null, Junio: null, Julio: null, Agosto: null,
-                        Septiembre: null, Octubre: null, Noviembre: null, Diciembre: null
-                    };
-                }
-                const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
-                    'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-                agrupados[key][meses[row.mes - 1]] = row.valor;
-            });
-
-            const datosFinales = Object.values(agrupados).map(fila => {
-                const promedio = calcularPromedio(fila);
-                return {
-                    ...fila,
-                    Promedio: promedio,
-                    'Riesgo Alto': promedio + 0.05,
-                    'Riesgo Bajo': promedio - 0.01
-                };
-            });
-
-            const ordenCAMELS = ['C','A','M','E','L','S'];
-            const datosOrdenados = datosFinales.sort((a, b) => {
-                const indiceA = ordenCAMELS.indexOf(a.Tipo.charAt(0).toUpperCase());
-                const indiceB = ordenCAMELS.indexOf(b.Tipo.charAt(0).toUpperCase());
-                return indiceA - indiceB;
-            });
-
-            setDatos(datosOrdenados);
-
-            const riesgosInit = {};
-            datosOrdenados.forEach(row => {
-                const key = row.Tipo + '|' + row.Indicador;
-                riesgosInit[key] = {
-                    bajo: row['Riesgo Bajo'],
-                    alto: row['Riesgo Alto']
-                };
-            });
-            setRiesgos(riesgosInit);
-
-        } catch (err) {
-            alert('Error al consultar la API');
-        }
-    };
-
     return (
         <div className="home-page">
             <Header title="CAMEL Model - Consulta de Indicadores"/>
             <div className="main-content">
-                <form onSubmit={fetchData} className="search-form">
-                    <select
-                        value={cooperativa}
-                        onChange={e => setCooperativa(e.target.value)}
-                        required
-                    >
-                        <option value="">Seleccione una cooperativa</option>
-                        {cooperativas.map(c => (
-                            <option key={c.ID_cooperativa} value={c.nombre}>
-                                {c.nombre}
-                            </option>
-                        ))}
-                    </select>
-                    <select
-                        value={year}
-                        onChange={e => setYear(e.target.value)}
-                        required
-                    >
-                        <option value="">Seleccione un año</option>
-                        {anios.map((a, index) => (
-                            <option key={index} value={a}>{a}</option>
-                        ))}
-                    </select>
-                    <button type="submit">Consultar</button>
-                </form>
+                <div className="info-display">
+                    <h3>Cooperativa Seleccionada: {cooperativa}</h3>
+                    <h3>Año: {year}</h3>
+                    <p><em>Para cambiar la cooperativa o año, ve a la página de "Cálculo de IRL y Solvencia"</em></p>
+                </div>
                 <Tablero
                     columnas={columnas}
                     datos={datos}
