@@ -57,19 +57,59 @@
 
 .info-selected-and-saved {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.info-selected-and-saved h3 {
+    margin: 0;
+    color: #001F3F;
+}
+
+.search-form {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
     align-items: center;
-    }
+}
+
+.search-form select {
+    padding: 10px 15px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    min-width: 200px;
+    background-color: white;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.search-form select:hover {
+    border-color: #5DADE2;
+}
+
+.search-form select:focus {
+    outline: none;
+    border-color: #5DADE2;
+    box-shadow: 0 0 0 3px rgba(93, 173, 226, 0.1);
+}
     
 .info-selected-and-saved button {
-    padding: 8px 16px;
+    padding: 10px 20px;
     background-color: #5DADE2;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
+    font-weight: bold;
     transition: background-color 0.3s ease;
+    align-self: flex-start;
+}
+
+.info-selected-and-saved button:hover {
+    background-color: #3498db;
 }
 
 
