@@ -18,8 +18,9 @@ const Menu = () => {
             
             {isOpen && (
                 <ul className="menu-list">
-                    <li><Link to="/">🏠 Home</Link></li>
-                    <li><Link to="/page2">📊 IRL y Solvencia</Link></li>
+                    <li><Link to="/">📊 IRL y Solvencia</Link></li>
+                    <li><Link to="/home">🏠 Home</Link></li>
+                    <li><Link to="/camels_value">💼 Valor CAMEL</Link></li>
                 </ul>
             )}
         </div>

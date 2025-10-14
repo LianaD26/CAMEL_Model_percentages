@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from "./pages/home";
 import Page2 from "./pages/page2";
+import CamelValue from "./pages/camels_value/camel_value";
 import './App.css';
 
 function App() {
@@ -11,10 +12,10 @@ function App() {
     return (
         <Router basename={basename}>
             <div className="App">
-                {/* ...aquí solo las rutas, el menú se gestiona en Menu.js */}
                 <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/page2" element={<Page2 />} />
+                    <Route path="/" element={<Page2 />} />
+                    <Route path="/home" element={<Home />} />
+                    <Route path="/camels_value" element={<CamelValue />} />
                 </Routes>
             </div>
         </Router>
