@@ -55,7 +55,6 @@
     border-color: #bbb;
 }
 
-<<<<<<< HEAD
 .info-selected-and-saved {
     display: flex;
     flex-direction: column;
@@ -114,8 +113,6 @@
 }
 
 
-=======
->>>>>>> 01a9bb3ab76d041936b48f1e23bdd1d43a8017ad
 /* Estilos responsivos */
 @media (max-width: 768px) {
     .input-grid {

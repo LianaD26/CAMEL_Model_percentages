@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import Dict
 
 from API.app.database import get_db
-from API.app.service.calificationPredictor import CalificationPredictorService
+from API.app.services.calificationPredictor import CalificationPredictorService
 from API.app.schemas.calificationPredictor import CalificationPredictorResponse
 
 router = APIRouter(
