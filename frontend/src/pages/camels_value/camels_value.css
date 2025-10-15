@@ -5,3 +5,121 @@
     padding: 10px;
     gap: 20px;
 }
+
+.tabla-porcentajes-section {
+    margin: 20px 0;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+}
+
+.tabla-porcentajes-section h3 {
+    color: #001F3F;
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.tabla-calificaciones-section {
+    margin: 20px 0;
+    padding: 20px;
+    background: #f1f8ff;
+    border-radius: 8px;
+    border: 1px solid #c6e2ff;
+}
+
+.tabla-calificaciones-section h3 {
+    color: #001F3F;
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.camel-value-page {
+    padding: 20px;
+    background: #ffffff;
+    min-height: 100vh;
+}
+
+.warning-message {
+    padding: 12px;
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 6px;
+    color: #856404;
+    margin: 10px 0;
+}
+
+.loading-message {
+    padding: 12px;
+    background-color: #e3f2fd;
+    border: 1px solid #90caf9;
+    border-radius: 6px;
+    color: #1565c0;
+    text-align: center;
+    margin: 10px 0;
+}
+
+.error-message {
+    padding: 12px;
+    background-color: #ffebee;
+    border: 1px solid #f8bbd9;
+    border-radius: 6px;
+    color: #c62828;
+    text-align: center;
+    margin: 10px 0;
+}
+
+.no-data-message {
+    padding: 12px;
+    background-color: #f3e5f5;
+    border: 1px solid #ce93d8;
+    border-radius: 6px;
+    color: #7b1fa2;
+    text-align: center;
+    margin: 10px 0;
+}
+
+.retry-button {
+    background-color: #001F3F;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.retry-button:hover {
+    background-color: #003366;
+}
+
+.tabla-valores-camel-section {
+    margin: 20px 0;
+    padding: 20px;
+    background: linear-gradient(135deg, #e8f5e8 0%, #d4f0d4 100%);
+    border-radius: 12px;
+    border: 2px solid #4CAF50;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tabla-valores-camel-section h3 {
+    color: #2E7D32;
+    margin-bottom: 10px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.3em;
+}
+
+.descripcion-camel {
+    color: #1B5E20;
+    text-align: center;
+    font-style: italic;
+    margin-bottom: 15px;
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #81C784;
+}
