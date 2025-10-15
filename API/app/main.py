@@ -20,6 +20,7 @@ from API.app.routes.cooperativa import router as cooperativa_router
 from API.app.routes.indicador import router as indicador_router
 from API.app.routes.registro import router as registro_router
 from API.app.routes.anos import router as anos_router
+from API.app.routes.predictor import router as predictor_router
 
 
 app.include_router(camel_router)
@@ -27,3 +28,4 @@ app.include_router(cooperativa_router)
 app.include_router(indicador_router)
 app.include_router(registro_router)
 app.include_router(anos_router)
+app.include_router(predictor_router)
