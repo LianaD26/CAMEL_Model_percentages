@@ -12,12 +12,12 @@ pydantic==2.5.3
 # Variables de entorno
 python-dotenv==1.0.1
 
-# Análisis de datos
-pandas==2.2.2
+# Análisis de datos (versiones compatibles con Python 3.11)
+pandas==2.1.4
 numpy==1.26.4
 
 # Machine Learning (para PCA)
-scikit-learn==1.5.2
+scikit-learn==1.3.2
 
 # CORS y manejo de formularios
 python-multipart==0.0.9
