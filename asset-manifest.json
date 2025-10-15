@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/CAMEL_Model_percentages/static/css/main.dbe341b7.css",
-    "main.js": "/CAMEL_Model_percentages/static/js/main.c05b87c5.js",
+    "main.css": "/CAMEL_Model_percentages/static/css/main.92f98b0d.css",
+    "main.js": "/CAMEL_Model_percentages/static/js/main.bcfc2e7b.js",
     "static/js/453.670e15c7.chunk.js": "/CAMEL_Model_percentages/static/js/453.670e15c7.chunk.js",
     "index.html": "/CAMEL_Model_percentages/index.html",
-    "main.dbe341b7.css.map": "/CAMEL_Model_percentages/static/css/main.dbe341b7.css.map",
-    "main.c05b87c5.js.map": "/CAMEL_Model_percentages/static/js/main.c05b87c5.js.map",
+    "main.92f98b0d.css.map": "/CAMEL_Model_percentages/static/css/main.92f98b0d.css.map",
+    "main.bcfc2e7b.js.map": "/CAMEL_Model_percentages/static/js/main.bcfc2e7b.js.map",
     "453.670e15c7.chunk.js.map": "/CAMEL_Model_percentages/static/js/453.670e15c7.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.dbe341b7.css",
-    "static/js/main.c05b87c5.js"
+    "static/css/main.92f98b0d.css",
+    "static/js/main.bcfc2e7b.js"
   ]
 }
