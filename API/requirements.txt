@@ -8,7 +8,6 @@ mysql-connector-python==8.2.0
 
 # Validación de datos
 pydantic==2.5.3
-pydantic-core==2.14.6  # versión compatible con FastAPI 0.104+
 
 # Variables de entorno
 python-dotenv==1.0.1
