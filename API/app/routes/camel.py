@@ -4,10 +4,9 @@ from typing import List
 from API.app.database import get_db
 from API.app.models.camel import Camel
 from API.app.schemas.camel import CamelSchema
+from API.app.services.pca import promedio_indicadores
 
-from .. import database, models
-from ..models.modelo_ag import genetic_algorithm, camel_structure
-from ..models.get_data_for_model import get_X_y_from_db
+from .. import database
 
 router = APIRouter(prefix="/camels", tags=["camels"])
 
@@ -15,19 +14,8 @@ router = APIRouter(prefix="/camels", tags=["camels"])
 def get_all_camels(db: Session = Depends(get_db)):
     return db.query(Camel).all()
 
-@router.get("/optimizar-pesos")
-def optimizar_pesos(db: Session = Depends(database.get_db)):
-    X, y = get_X_y_from_db(db, target_column="riesgo")
-
-    # execute GA
-    best_weights, best_auc = genetic_algorithm(X, y)
-
-    # format output
-    idx = 0
-    pesos_dict = {}
-    for block, indicators in camel_structure.items():
-        for ind in indicators:
-            pesos_dict[f"{block}-{ind}"] = float(best_weights[idx])
-            idx += 1
-
-    return {"pesos": pesos_dict, "mejor_auc": best_auc}
+@router.get("/prom")
+def obtener_pca_mensual():
+    """Endpoint para obtener los resultados del PCA mensual."""
+    resultados_df = promedio_indicadores()
+    return resultados_df.to_dict(orient="records")
