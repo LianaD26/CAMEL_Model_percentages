@@ -1,11 +1,15 @@
 import mysql.connector
 from data import Data 
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
+PASSWORD = os.getenv("DB_PASSWORD")
 conn = mysql.connector.connect(
     host="camel-model25-limadio-5956.j.aivencloud.com",
     port=16156,
     user="avnadmin",
-    password="",
+    password= PASSWORD,
     ssl_ca="/home/lia/aiven-mysql/ca.pem",
     database="camel_model" 
 )

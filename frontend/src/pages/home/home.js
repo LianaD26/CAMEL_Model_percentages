@@ -157,7 +157,6 @@ const Home = () => {
         } else if (columna === 'Riesgo Bajo') {
             nuevosRiesgos[key] = { ...nuevosRiesgos[key], bajo: valorFormateado };
         }
-
         setDatos(nuevosDatos);
         setRiesgos(nuevosRiesgos);
     };
