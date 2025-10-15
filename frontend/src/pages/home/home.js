@@ -13,6 +13,7 @@ const Home = () => {
         return datosGuardados ? JSON.parse(datosGuardados) : [];
     });
     const [riesgos, setRiesgos] = useState({});
+    const [cargando, setCargando] = useState(false);
     const columnas = [
         'Tipo', 'Indicador', 'Enero', 'Febrero', 'Marzo', 'Abril',
         'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre',
@@ -21,8 +22,8 @@ const Home = () => {
 
     // extraer datos del los indicadores del local storage
     const indicadoresGuardados = () => {
-        const data = localStorage.getItem('indicadoresIRL_SOLV');
-        return data ? JSON.parse(data) : {};
+        const datosGuardados = localStorage.getItem('indicadoresIRL_SOLV');
+        return datosGuardados ? JSON.parse(datosGuardados) : {};
     };
 
 
@@ -189,6 +190,87 @@ const Home = () => {
         return '';
     };
 
+    // Consultar datos desde la API
+    const fetchData = async () => {
+        const cooperativaActual = localStorage.getItem('cooperativaSeleccionada');
+        const yearActual = localStorage.getItem('anoSeleccionado');
+        
+        if (!cooperativaActual || !yearActual || 
+            cooperativaActual === 'No seleccionada' || yearActual === 'No seleccionado') {
+            alert('Por favor, seleccione primero una cooperativa y año en la página de "Cálculo de IRL y Solvencia"');
+            return;
+        }
+
+        setCargando(true);
+        try {
+            const res = await fetch(
+                `${API_URL}/registros/completo/?cooperativa_nombre=${cooperativaActual}&year=${yearActual}`
+            );
+            const result = await res.json();
+
+            const agrupados = {};
+            result.forEach(row => {
+                const key = row.nombre_camel + '|' + row.nombre_indicador;
+                if (!agrupados[key]) {
+                    agrupados[key] = {
+                        Tipo: row.nombre_camel,
+                        Indicador: row.nombre_indicador,
+                        Enero: null, Febrero: null, Marzo: null, Abril: null,
+                        Mayo: null, Junio: null, Julio: null, Agosto: null,
+                        Septiembre: null, Octubre: null, Noviembre: null, Diciembre: null
+                    };
+                }
+                const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                    'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+                agrupados[key][meses[row.mes - 1]] = row.valor;
+            });
+
+            const datosFinales = Object.values(agrupados).map(fila => {
+                const promedio = calcularPromedio(fila);
+                return {
+                    ...fila,
+                    Promedio: promedio,
+                    'Riesgo Alto': promedio + 0.05,
+                    'Riesgo Bajo': promedio - 0.01
+                };
+            });
+
+            const ordenCAMELS = ['C','A','M','E','L','S'];
+            const datosOrdenados = datosFinales.sort((a, b) => {
+                const indiceA = ordenCAMELS.indexOf(a.Tipo.charAt(0).toUpperCase());
+                const indiceB = ordenCAMELS.indexOf(b.Tipo.charAt(0).toUpperCase());
+                return indiceA - indiceB;
+            });
+
+            setDatos(datosOrdenados);
+
+            const riesgosInit = {};
+            datosOrdenados.forEach(row => {
+                const key = row.Tipo + '|' + row.Indicador;
+                riesgosInit[key] = {
+                    bajo: row['Riesgo Bajo'],
+                    alto: row['Riesgo Alto']
+                };
+            });
+            setRiesgos(riesgosInit);
+
+            // Después de cargar datos, aplicar los indicadores guardados
+            setTimeout(() => aplicarIndicadoresGuardados(), 100);
+
+        } catch (err) {
+            alert('Error al consultar la API: ' + err.message);
+        } finally {
+            setCargando(false);
+        }
+    };
+
+    // Cargar datos automáticamente si hay cooperativa y año seleccionados
+    useEffect(() => {
+        if (cooperativa !== 'No seleccionada' && year !== 'No seleccionado' && datos.length === 0) {
+            fetchData();
+        }
+    }, []);
+
     return (
         <div className="home-page">
             <Header title="CAMEL Model - Consulta de Indicadores"/>
@@ -197,6 +279,13 @@ const Home = () => {
                     <h3>Cooperativa Seleccionada: {cooperativa}</h3>
                     <h3>Año: {year}</h3>
                     <p><em>Para cambiar la cooperativa o año, ve a la página de "Cálculo de IRL y Solvencia"</em></p>
+                    <button 
+                        onClick={fetchData} 
+                        disabled={cargando}
+                        className="btn-consultar"
+                    >
+                        {cargando ? 'Cargando...' : 'Consultar Datos'}
+                    </button>
                 </div>
                 <Tablero
                     columnas={columnas}
