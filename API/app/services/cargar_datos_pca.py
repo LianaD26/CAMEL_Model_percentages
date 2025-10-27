@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 def cargar_datos():
     """Carga y prepara los datos desde la base MySQL para el análisis PCA."""
-    load_dotenv()
+    load_dotenv("/home/lia/Documentos/repos/CAMEL_Model_Percentages/CAMEL_Model_percentages/frontend/.env")
     PASSWORD = os.getenv("DB_PASSWORD")
 
     conn = mysql.connector.connect(

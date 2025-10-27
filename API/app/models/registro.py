@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float,ForeignKey
-from API.app.database import Base
+from app.database import Base
 
 class Registro(Base):
     __tablename__ = "registro"

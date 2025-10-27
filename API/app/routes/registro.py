@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
-from API.app.models.camel import Camel
-from API.app.database import get_db
-from API.app.models.registro import Registro
-from API.app.models.indicador import Indicador
-from API.app.models.cooperativa import Cooperativa
-from API.app.schemas.registro import RegistroSchema
-from API.app.schemas.registro_completo import RegistroCompletoSchema
+from app.models.camel import Camel
+from app.database import get_db
+from app.models.registro import Registro
+from app.models.indicador import Indicador
+from app.models.cooperativa import Cooperativa
+from app.schemas.registro import RegistroSchema
+from app.schemas.registro_completo import RegistroCompletoSchema
 
 router = APIRouter(prefix="/registros", tags=["registros"])
 

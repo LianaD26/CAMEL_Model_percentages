@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
-from API.app.database import get_db
-from API.app.models.indicador import Indicador
-from API.app.schemas.indicador import IndicadorSchema
+from app.database import get_db
+from app.models.indicador import Indicador
+from app.schemas.indicador import IndicadorSchema
 
 router = APIRouter(prefix="/indicadores", tags=["indicadores"])
 

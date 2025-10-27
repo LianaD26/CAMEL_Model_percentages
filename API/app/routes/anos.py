@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 
-from API.app.database import get_db
-from API.app.crud import anos as anos_crud
-from API.app.schemas.anos import AnoResponse
+from app.database import get_db
+from app.crud import anos as anos_crud
+from app.schemas.anos import AnoResponse
 
 router = APIRouter(
     prefix="/anos",

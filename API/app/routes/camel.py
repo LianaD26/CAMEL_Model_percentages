@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
-from API.app.database import get_db
-from API.app.models.camel import Camel
-from API.app.schemas.camel import CamelSchema
-from API.app.services.pca import promedio_indicadores
+from app.database import get_db
+from app.models.camel import Camel
+from app.schemas.camel import CamelSchema
+from app.services.pca import promedio_indicadores
+import pandas as pd
 
 from .. import database
 
