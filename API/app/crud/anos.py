@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import distinct
-from API.app.models.registro import Registro
+from app.models.registro import Registro
 from typing import List
 
 def get_unique_years(db: Session) -> List[int]:

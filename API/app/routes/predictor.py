@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import Dict
 
-from API.app.database import get_db
-from API.app.services.calificationPredictor import CalificationPredictorService
-from API.app.schemas.calificationPredictor import CalificationPredictorResponse
+from app.database import get_db
+from app.services.calificationPredictor import CalificationPredictorService
+from app.schemas.calificationPredictor import CalificationPredictorResponse
 
 router = APIRouter(
     prefix="/predictor",

@@ -3,7 +3,7 @@ from data import Data
 from dotenv import load_dotenv
 import os
 
-load_dotenv()
+load_dotenv(dotenv_path="/home/lia/Documentos/repos/CAMEL_Model_Percentages/CAMEL_Model_percentages/frontend/.env")
 PASSWORD = os.getenv("DB_PASSWORD")
 conn = mysql.connector.connect(
     host="camel-model25-limadio-5956.j.aivencloud.com",

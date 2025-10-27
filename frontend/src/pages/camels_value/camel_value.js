@@ -82,6 +82,49 @@ const CamelValue = () => {
         }
     }, [cooperativa, ano]);
 
+    const enviarValoresCAMEL = async () => {
+        try {
+            const valores = [];
+
+            for (let mes = 1; mes <= 12; mes++) {
+                const valor = parseFloat(valoresCAMEL[0][`Mes ${mes}`]);
+                if (!isNaN(valor)) {
+                    valores.push({ mes, valor });
+                }
+            }
+
+            const body = {
+                cooperativa,
+                ano: parseInt(ano),
+                valores_CAMEL: valores,
+            };
+
+            console.log("📤 Enviando body al backend:", body);
+
+            const response = await fetch(`${API_URL}/modelos/evaluar`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body),
+            });
+
+            console.log("📥 Respuesta del servidor:", response);
+
+            const text = await response.text(); // lee incluso si hay error
+            console.log("📄 Contenido devuelto:", text);
+
+            if (!response.ok) {
+                throw new Error(`Error HTTP ${response.status} - ${text}`);
+            }
+
+            const data = JSON.parse(text);
+            console.log("📊 Resultados del modelo:", data);
+            alert("✅ Evaluación completada. Revisa la consola para ver resultados.");
+        } catch (err) {
+            console.error("❌ Error al enviar valores CAMEL:", err);
+            alert(`Error al evaluar el modelo: ${err.message}`);
+        }
+    };
+
     // 🔹 Calcular valores CAMEL mensuales
     const calcularValoresCAMEL = (calificacionesData, mapeoIndicadorPeso) => {
         const valoresCAMELMensuales = { Método: "Valor CAMEL Total" };
@@ -294,6 +337,10 @@ const CamelValue = () => {
                     />
                 </div>
             )}
+            <button onClick={enviarValoresCAMEL} className="evaluar-modelo-button">
+                Evaluar modelo predictivo
+            </button>
+
         </div>
     );
 };

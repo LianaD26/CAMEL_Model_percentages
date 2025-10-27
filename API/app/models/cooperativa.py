@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float
-from API.app.database import Base
+from app.database import Base
 
 class Cooperativa(Base):
     __tablename__ = "cooperativa"

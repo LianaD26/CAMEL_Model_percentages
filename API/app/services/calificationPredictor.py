@@ -2,9 +2,9 @@ import datetime
 import pandas as pd
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-from API.app.models.registro import Registro
-from API.app.models.indicador import Indicador
-from API.app.models.cooperativa import Cooperativa
+from app.models.registro import Registro
+from app.models.indicador import Indicador
+from app.models.cooperativa import Cooperativa
 from typing import Dict, List
 
 class CalificationPredictorService:
