@@ -5,3 +5,4 @@ tablas/**/*.csv
 web_scraping/Data_historico/
 web_scraping/*.xlsx
 frontend/.env
+**/.vscode/
