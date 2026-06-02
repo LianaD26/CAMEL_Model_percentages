@@ -1,8 +1,9 @@
-resultados/
 API/app/config.py
-__pycache__/
-tablas/**/*.csv
-web_scraping/Data_historico/
-web_scraping/*.xlsx
+**/__pycache__/
+#tablas/**/*.csv
+tablas/data_historico/
 frontend/.env
 **/.vscode/
+
+# Tablas que superan los 100MB de subida a GitHub
+tablas/*.csv
