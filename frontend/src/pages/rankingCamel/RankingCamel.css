@@ -1,0 +1,119 @@
+/* ======== CONTENEDOR PRINCIPAL ======== */
+.ranking-container {
+  max-width: 1000px;
+  margin: 2rem auto;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+/* ======== CONTROLES ======== */
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.controls label {
+  font-weight: 500;
+  color: #334155;
+  font-size: 0.95rem;
+}
+
+.controls select {
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background-color: #f8fafc;
+  font-size: 0.95rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.controls select:hover {
+  border-color: #94a3b8;
+}
+
+.controls button {
+  background: linear-gradient(90deg, #0284c7, #2563eb);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1.2rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+
+.controls button:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(90deg, #0369a1, #1e40af);
+}
+
+/* ======== TABLA ======== */
+.ranking-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+}
+
+.ranking-table th {
+  background-color: #f1f5f9;
+  color: #0f172a;
+  font-weight: 600;
+  text-align: left;
+  padding: 12px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.ranking-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #334155;
+}
+
+.ranking-table tbody tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+.ranking-table tbody tr:hover {
+  background-color: #e0f2fe;
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* ======== DESTACAR TOP 3 ======== */
+.rank-1 td {
+  background: linear-gradient(90deg, #fde047, #facc15);
+  font-weight: 600;
+}
+
+.rank-2 td {
+  background: linear-gradient(90deg, #e2e8f0, #cbd5e1);
+  font-weight: 600;
+}
+
+.rank-3 td {
+  background: linear-gradient(90deg, #f5d0fe, #e879f9);
+  font-weight: 600;
+}
+
+/* ======== ESTADOS ======== */
+.loading,
+.error {
+  text-align: center;
+  font-weight: 500;
+  margin-top: 1rem;
+}
+
+.loading {
+  color: #2563eb;
+}
+
+.error {
+  color: #dc2626;
+}
