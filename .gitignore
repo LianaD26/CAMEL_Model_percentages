@@ -5,5 +5,27 @@ tablas/data_historico/
 frontend/.env
 **/.vscode/
 
-# Tablas que superan los 100MB de subida a GitHub
+# ========================================
+# ARCHIVOS DE DATOS Y RESULTADOS
+# ========================================
+
+# Archivos CSV
 tablas/*.csv
+tablas/**/*.csv
+
+# Archivos Excel
+*.xlsx
+*.xls
+tablas/**/*.xlsx
+tablas/**/*.xls
+
+# Archivos JSON de datos
+API/data/*.json
+tablas/**/*.json
+
+# Archivos de texto de datos
+tablas/**/*.txt
+
+# Carpetas de resultados CAMEL
+tablas/camel/resultado_CAMEL/
+tablas/percentiles_y_rangos/
