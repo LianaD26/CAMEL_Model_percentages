@@ -3,6 +3,8 @@ API/app/config.py
 #tablas/**/*.csv
 tablas/data_historico/
 frontend/.env
+API/.env
+BD/.env
 **/.vscode/
 
 # ========================================
