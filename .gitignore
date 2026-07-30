@@ -9,11 +9,12 @@ frontend/.env
 # ARCHIVOS DE DATOS Y RESULTADOS
 # ========================================
 
-# Archivos CSV
+# Archivos CSV en TODAS las ubicaciones
 tablas/*.csv
 tablas/**/*.csv
+BD/*.csv
 
-# Archivos Excel
+# Archivos Excel en TODAS las ubicaciones
 *.xlsx
 *.xls
 tablas/**/*.xlsx
@@ -23,9 +24,17 @@ tablas/**/*.xls
 API/data/*.json
 tablas/**/*.json
 
-# Archivos de texto de datos
+# Archivos de texto en tablas
+tablas/*.txt
 tablas/**/*.txt
 
-# Carpetas de resultados CAMEL
+# Carpetas de datos y resultados
 tablas/camel/resultado_CAMEL/
 tablas/percentiles_y_rangos/
+tablas/data_historico/
+
+# Otros archivos de datos que puedan estar en tablas
+tablas/*.dat
+tablas/**/*.dat
+tablas/*.tsv
+tablas/**/*.tsv
