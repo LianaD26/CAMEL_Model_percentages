@@ -9,15 +9,23 @@ const Tablero = ({ columnas, datos, obtenerClaseRiesgo, onRiesgoChange }) => {
         'IRL',
         'Solvencia'
     ];
+    
+    // Columnas que NO deben multiplicarse por 100 (ya están en porcentaje o en sus unidades correctas)
+    const columnasNoMultiplicar = ['Peso (%)', 'Promedio', 'Desv. Est.'];
 
     // Formatea y multiplica por 100 solo si NO está en la lista de excepciones
-    const formatearNumero = (valor, fila) => {
+    const formatearNumero = (valor, fila, columna) => {
         if (valor === null || valor === undefined || valor === '') {
             return '-';
         }
         
+        // Verificar si esta columna NO debe multiplicarse por 100
+        const noMultiplicarPorColumna = columnasNoMultiplicar.includes(columna);
+        
         // Verificar si este indicador NO debe multiplicarse por 100
-        const noMultiplicar = fila && indicadoresSinMultiplicar.includes(fila.Indicador);
+        const noMultiplicarPorIndicador = fila && indicadoresSinMultiplicar.includes(fila.Indicador);
+        
+        const noMultiplicar = noMultiplicarPorColumna || noMultiplicarPorIndicador;
         
         if (typeof valor === 'number') {
             return noMultiplicar ? valor.toFixed(5) : (valor * 100).toFixed(5);
@@ -43,7 +51,7 @@ const Tablero = ({ columnas, datos, obtenerClaseRiesgo, onRiesgoChange }) => {
                 <input
                     type="number"
                     step="0.00001"
-                    value={formatearNumero(valor, fila)}
+                    value={formatearNumero(valor, fila, columna)}
                     onChange={(e) => handleRiesgoChange(filaIndex, columna, e.target.value)}
                     onBlur={(e) => {
                         const valorFormateado = parseFloat(e.target.value).toFixed(5);
@@ -62,7 +70,7 @@ const Tablero = ({ columnas, datos, obtenerClaseRiesgo, onRiesgoChange }) => {
             );
         }
         // Para otras columnas, mostrar normalmente
-        return formatearNumero(valor, fila);
+        return formatearNumero(valor, fila, columna);
     };
 
     return (

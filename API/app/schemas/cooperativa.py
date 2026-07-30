@@ -1,8 +1,9 @@
 from pydantic import BaseModel
 
 class CooperativaSchema(BaseModel):
-    ID_cooperativa: int
-    nombre: str
+    id_cooperative: int
+    name: str
+    category: str = None
 
     class Config:
         from_attributes = True

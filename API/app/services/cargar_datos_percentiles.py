@@ -1,4 +1,9 @@
-# services/cargar_datos_pca.py
+# services/cargar_datos_percentiles.py
+"""
+Extrae datos de percentiles desde PostgreSQL Neon.
+Similar a cargar_datos_pca.py pero mantiene estructura para calcular percentiles.
+"""
+
 import pandas as pd
 from sqlalchemy.orm import Session
 from app.models.registro import Registro
@@ -6,18 +11,19 @@ from app.models.indicador import Indicador
 from app.models.cooperativa import Cooperativa
 from app.models.camel import Camel
 
-def cargar_datos_desde_db(db: Session, categoria: str = None):
+
+def cargar_datos_percentiles(db: Session, categoria: str = None):
     """
-    Carga y prepara los datos desde PostgreSQL Neon para el análisis PCA.
+    Carga datos desde PostgreSQL para el cálculo de percentiles.
     
     Args:
         db: Sesión de base de datos SQLAlchemy
-        categoria: (Optional) Filtrar por categoría. Si es None, carga todas las categorías.
+        categoria: (Optional) Filtrar por categoría. Si es None, carga todas.
     
     Returns:
-        DataFrame con estructura pivotada: 
-        Índice: [ano, mes, ID_cooperativa, cooperativa_nombre, categoria]
-        Columnas: indicadores (valores numéricos)
+        DataFrame con estructura:
+        Columnas: [ID_indicador, valor, year, month, id_cooperativa, cooperativa_nombre, categoria]
+        (NO pivotada, para facilitar cálculo de percentiles)
     """
     
     # Query base: obtener todos los registros necesarios
@@ -51,8 +57,8 @@ def cargar_datos_desde_db(db: Session, categoria: str = None):
         {
             'id_record': r.id_record,
             'valor': r.value,
-            'ano': r.year,
-            'mes': r.month,
+            'year': r.year,
+            'month': r.month,
             'indicador_nombre': r.indicador_nombre,
             'id_indicador': r.id_indicator,
             'cooperativa_nombre': r.cooperativa_nombre,
@@ -62,14 +68,4 @@ def cargar_datos_desde_db(db: Session, categoria: str = None):
         for r in resultados
     ])
     
-    if df.empty:
-        return pd.DataFrame()
-    
-    # Crear tabla pivotada
-    df_pivot = df.pivot_table(
-        index=['ano', 'mes', 'id_cooperativa', 'cooperativa_nombre', 'categoria'],
-        columns='indicador_nombre',
-        values='valor'
-    ).reset_index()
-    
-    return df_pivot
+    return df

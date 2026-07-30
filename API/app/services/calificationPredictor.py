@@ -15,11 +15,13 @@ class CalificationPredictorService:
         """Obtiene registros filtrados usando CRUD directamente"""
         year_actual = datetime.datetime.now().year
         
-        registros = self.db.query(Registro).filter(
-            Registro.cooperativa_nombre == cooperativa_nombre,
-            Registro.ano >= year_inicial,
-            Registro.ano <= year_actual
-        ).order_by(Registro.ano.asc()).all()
+        registros = self.db.query(Registro).join(
+            Cooperativa, Registro.id_cooperative == Cooperativa.id_cooperative
+        ).filter(
+            Cooperativa.name == cooperativa_nombre,
+            Registro.year >= year_inicial,
+            Registro.year <= year_actual
+        ).order_by(Registro.year.asc()).all()
         
         return pd.DataFrame(registros)
     
@@ -38,14 +40,14 @@ class CalificationPredictorService:
         """
         # Obtener todos los registros del año especificado
         registros = self.db.query(
-            Registro.ID_indicador,
-            Registro.mes,
-            Registro.valor,
-            Indicador.nombre.label('indicador_nombre')
+            Registro.id_indicator,
+            Registro.month,
+            Registro.value,
+            Indicador.name.label('indicador_nombre')
         ).join(
-            Indicador, Registro.ID_indicador == Indicador.ID_indicador
+            Indicador, Registro.id_indicator == Indicador.id_indicator
         ).filter(
-            Registro.ano == year
+            Registro.year == year
         ).all()
         
         if not registros:
@@ -54,9 +56,9 @@ class CalificationPredictorService:
         # Convertir a DataFrame
         df = pd.DataFrame([
             {
-                'ID_indicador': r.ID_indicador,
-                'mes': r.mes,
-                'valor': r.valor,
+                'id_indicator': r.id_indicator,
+                'month': r.month,
+                'value': r.value,
                 'indicador_nombre': r.indicador_nombre
             }
             for r in registros
@@ -69,7 +71,7 @@ class CalificationPredictorService:
             df_indicador = df[df['indicador_nombre'] == indicador].copy()
             
             # Calcular percentiles para cada valor
-            df_indicador['percentil'] = df_indicador['valor'].rank(pct=True) * 100
+            df_indicador['percentil'] = df_indicador['value'].rank(pct=True) * 100
             
             # Asignar calificación basada en percentiles
             def asignar_calificacion(percentil):
@@ -97,7 +99,7 @@ class CalificationPredictorService:
             df_indicador['calificacion'] = df_indicador['percentil'].apply(asignar_calificacion)
             
             # Crear diccionario mes -> calificación promedio
-            calificaciones[indicador] = df_indicador.groupby('mes')['calificacion'].mean().round().astype(int).to_dict()
+            calificaciones[indicador] = df_indicador.groupby('month')['calificacion'].mean().round().astype(int).to_dict()
         
         return calificaciones
     
@@ -114,7 +116,7 @@ class CalificationPredictorService:
         """
         # Obtener ID de la cooperativa
         cooperativa = self.db.query(Cooperativa).filter(
-            Cooperativa.nombre == cooperativa_nombre
+            Cooperativa.name == cooperativa_nombre
         ).first()
         
         if not cooperativa:
@@ -122,15 +124,15 @@ class CalificationPredictorService:
         
         # Obtener todos los registros de todas las cooperativas para calcular percentiles
         todos_registros = self.db.query(
-            Registro.ID_indicador,
-            Registro.mes,
-            Registro.valor,
-            Registro.ID_cooperativa,
-            Indicador.nombre.label('indicador_nombre')
+            Registro.id_indicator,
+            Registro.month,
+            Registro.value,
+            Registro.id_cooperative,
+            Indicador.name.label('indicador_nombre')
         ).join(
-            Indicador, Registro.ID_indicador == Indicador.ID_indicador
+            Indicador, Registro.id_indicator == Indicador.id_indicator
         ).filter(
-            Registro.ano == year
+            Registro.year == year
         ).all()
         
         if not todos_registros:
@@ -139,10 +141,10 @@ class CalificationPredictorService:
         # Convertir a DataFrame
         df_todos = pd.DataFrame([
             {
-                'ID_indicador': r.ID_indicador,
-                'mes': r.mes,
-                'valor': r.valor,
-                'ID_cooperativa': r.ID_cooperativa,
+                'id_indicator': r.id_indicator,
+                'month': r.month,
+                'value': r.value,
+                'id_cooperative': r.id_cooperative,
                 'indicador_nombre': r.indicador_nombre
             }
             for r in todos_registros
@@ -159,7 +161,7 @@ class CalificationPredictorService:
             df_indicador = df_todos[df_todos['indicador_nombre'] == indicador].copy()
             
             # Calcular percentiles globales
-            df_indicador['percentil'] = df_indicador['valor'].rank(pct=True) * 100
+            df_indicador['percentil'] = df_indicador['value'].rank(pct=True) * 100
             
             # Asignar calificación
             def asignar_calificacion(percentil):
@@ -187,13 +189,13 @@ class CalificationPredictorService:
             df_indicador['calificacion'] = df_indicador['percentil'].apply(asignar_calificacion)
             
             # Filtrar solo la cooperativa solicitada
-            df_coop = df_indicador[df_indicador['ID_cooperativa'] == cooperativa.ID_cooperativa]
+            df_coop = df_indicador[df_indicador['id_cooperative'] == cooperativa.id_cooperative]
             
             if not df_coop.empty:
                 # Crear diccionario mes -> calificación
                 calificaciones_mensuales = {}
                 for mes in range(1, 13):
-                    mes_data = df_coop[df_coop['mes'] == mes]
+                    mes_data = df_coop[df_coop['month'] == mes]
                     if not mes_data.empty:
                         calificaciones_mensuales[mes] = int(mes_data['calificacion'].iloc[0])
                 

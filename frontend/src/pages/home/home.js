@@ -6,14 +6,99 @@ import './home.css';
 const API_URL = process.env.REACT_APP_API_URL;
 
 const Home = () => {
-    const [cooperativa, setCooperativa] = useState(() => localStorage.getItem('cooperativaSeleccionada') || 'No seleccionada');
-    const [year, setYear] = useState(() => localStorage.getItem('anoSeleccionado') || 'No seleccionado');
+    // Debug: mostrar API_URL
+    console.log("API_URL configurado:", API_URL);
+    // Estados para los filtros
+    const [categoria, setCategoria] = useState("");
+    const [cooperativa, setCooperativa] = useState("");
+    const [ano, setAno] = useState("");
+    const [categorias, setCategorias] = useState([]);
+    const [cooperativas, setCooperativas] = useState([]);
+    const [anos, setAnos] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [filterError, setFilterError] = useState("");
+
+    // Estados originales
+    const [cooperativaOriginal] = useState(() => localStorage.getItem('cooperativaSeleccionada') || 'No seleccionada');
+    const [yearOriginal] = useState(() => localStorage.getItem('anoSeleccionado') || 'No seleccionado');
     const [datos, setDatos] = useState(() => {
         const datosGuardados = localStorage.getItem('datosTabla');
         return datosGuardados ? JSON.parse(datosGuardados) : [];
     });
     const [riesgos, setRiesgos] = useState({});
     const [cargando, setCargando] = useState(false);
+
+    // Cargar años disponibles desde la API
+    useEffect(() => {
+        const cargarAnos = async () => {
+            try {
+                console.log("📅 Cargando años desde:", `${API_URL}/anos/`);
+                const res = await fetch(`${API_URL}/anos/`);
+                const data = await res.json();
+                console.log("📅 Años obtenidos:", data);
+                // El endpoint retorna {anos: [...], total: N}
+                const aniosList = Array.isArray(data.anos) ? data.anos.sort((a, b) => a - b) : [];
+                console.log("📅 Años después de procesar:", aniosList);
+                setAnos(aniosList);
+            } catch (err) {
+                console.error("❌ Error cargando años:", err);
+                setAnos([]);
+            }
+        };
+        cargarAnos();
+    }, []);
+
+    // Cargar cooperativas y extraer categorías únicas
+    useEffect(() => {
+        const cargarCooperativas = async () => {
+            try {
+                console.log("🏢 Cargando cooperativas desde:", `${API_URL}/cooperativas/`);
+                const res = await fetch(`${API_URL}/cooperativas/`);
+                const data = await res.json();
+                console.log("🏢 Cooperativas obtenidas:", data.length, "registros");
+                setCooperativas(data);
+                
+                // Extraer categorías únicas
+                const categoriasUnicas = [...new Set(data.map(c => c.category).filter(c => c))];
+                console.log("📊 Categorías únicas:", categoriasUnicas);
+                setCategorias(categoriasUnicas.sort());
+            } catch (err) {
+                console.error("❌ Error cargando cooperativas:", err);
+                setCooperativas([]);
+                setCategorias([]);
+            }
+        };
+        cargarCooperativas();
+    }, []);
+
+    // Filtrar cooperativas según la categoría seleccionada
+    const cooperativasFiltradas = categoria 
+        ? cooperativas.filter(c => c.category === categoria)
+        : cooperativas;
+
+    // Debug: mostrar estado de filtros
+    useEffect(() => {
+        const botonHabilitado = !ano || (!categoria && !cooperativa) || (categoria && cooperativa) || loading;
+        console.log("📊 Estado actual de filtros:");
+        console.log("  - Categoría:", categoria || "(vacío)");
+        console.log("  - Cooperativa:", cooperativa || "(vacío)");
+        console.log("  - Año:", ano || "(vacío)");
+        console.log("  - Botón HABILITADO:", !botonHabilitado);
+        console.log("  - Modo búsqueda:", categoria ? "POR CATEGORÍA" : cooperativa ? "POR COOPERATIVA" : "NINGUNO");
+    }, [categoria, cooperativa, ano, loading]);
+
+    // Cuando se selecciona un filtro, guardar en localStorage para mantener compatibilidad
+    useEffect(() => {
+        if (ano && (cooperativa || categoria)) {
+            localStorage.setItem('anoSeleccionado', ano);
+            if (cooperativa) {
+                localStorage.setItem('cooperativaSeleccionada', cooperativa);
+            }
+            if (categoria) {
+                localStorage.setItem('categoriaSeleccionada', categoria);
+            }
+        }
+    }, [cooperativa, categoria, ano]);
     const columnas = [
         'Tipo', 'Indicador', 'Enero', 'Febrero', 'Marzo', 'Abril',
         'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre',
@@ -27,25 +112,6 @@ const Home = () => {
     };
 
 
-    // Sincronizar cooperativa y año desde localStorage
-    useEffect(() => {
-        const handleStorageUpdate = () => {
-            setCooperativa(localStorage.getItem('cooperativaSeleccionada') || 'No seleccionada');
-            setYear(localStorage.getItem('anoSeleccionado') || 'No seleccionado');
-        };
-
-        // Escuchar cambios en localStorage
-        window.addEventListener('storage', handleStorageUpdate);
-        
-        // También verificar cambios periódicamente (para cambios en la misma pestaña)
-        const interval = setInterval(handleStorageUpdate, 1000);
-
-        return () => {
-            window.removeEventListener('storage', handleStorageUpdate);
-            clearInterval(interval);
-        };
-    }, []);
-
     // Guardar datos en localStorage cuando cambien
     useEffect(() => {
         if (datos.length > 0) {
@@ -55,10 +121,10 @@ const Home = () => {
 
     // Función para aplicar indicadores guardados
     const aplicarIndicadoresGuardados = () => {
-        if (!cooperativa || !year || datos.length === 0) return;
+        if (!cooperativa || !ano || datos.length === 0) return;
         
         const indicadores = indicadoresGuardados();
-        const key = `${cooperativa}|${year}`;
+        const key = `${cooperativa}|${ano}`;
         
         if (indicadores[key]) {
             const { irl, solvencia } = indicadores[key];
@@ -75,7 +141,7 @@ const Home = () => {
                 const nuevosData = [...datosActuales];
                 
                 nuevosData.forEach(fila => {
-                    // Actualizar IRL (sin redondeo adicional, ya viene redondeado de Page2)
+                    // Actualizar IRL (datos redondeados de API)
                     if (irl && fila.Indicador === 'Indicador de Riesgo de Liquidez - IRL') {
                         Object.keys(irl).forEach(mes => {
                             const mesCapitalizado = mesesMap[mes.toLowerCase()];
@@ -90,7 +156,7 @@ const Home = () => {
                         fila['Riesgo Bajo'] = promedio - 0.01;
                     }
                     
-                    // Actualizar Solvencia (sin redondeo adicional, ya viene redondeado de Page2)
+                    // Actualizar Solvencia (datos redondeados de API)
                     if (solvencia && (fila.Indicador === 'Relación Solvencia' || fila.Indicador === 'Indicador de Solvencia')) {
                         Object.keys(solvencia).forEach(mes => {
                             const mesCapitalizado = mesesMap[mes.toLowerCase()];
@@ -114,7 +180,7 @@ const Home = () => {
     // useEffect para aplicar indicadores cuando cambien cooperativa, año o datos
     useEffect(() => {
         aplicarIndicadoresGuardados();
-    }, [cooperativa, year, datos.length]);
+    }, [cooperativa, ano, datos.length]);
 
     // useEffect para escuchar cambios en localStorage
     useEffect(() => {
@@ -135,7 +201,7 @@ const Home = () => {
             window.removeEventListener('storage', handleStorageChange);
             clearInterval(interval);
         };
-    }, [cooperativa, year]);
+    }, [cooperativa, ano]);
 
     // Formatear números (solo para valores de riesgo editables, sin redondeo para mostrar)
     const formatearNumero = (numero) => {
@@ -192,37 +258,77 @@ const Home = () => {
 
     // Consultar datos desde la API
     const fetchData = async () => {
-        const cooperativaActual = localStorage.getItem('cooperativaSeleccionada');
-        const yearActual = localStorage.getItem('anoSeleccionado');
-        
-        if (!cooperativaActual || !yearActual || 
-            cooperativaActual === 'No seleccionada' || yearActual === 'No seleccionado') {
-            alert('Por favor, seleccione primero una cooperativa y año en la página de "Cálculo de IRL y Solvencia"');
+        if (!ano || (!categoria && !cooperativa)) {
+            setFilterError('Por favor, selecciona un año y una categoría o cooperativa');
             return;
         }
-
-        setCargando(true);
+        if (categoria && cooperativa) {
+            setFilterError('No puedes seleccionar categoría y cooperativa a la vez');
+            return;
+        }
+        
+        setFilterError("");
+        setLoading(true);
         try {
-            const res = await fetch(
-                `${API_URL}/registros/completo/?cooperativa_nombre=${cooperativaActual}&year=${yearActual}`
-            );
+            let url = `${API_URL}/registros/completo/?year=${ano}`;
+            
+            if (cooperativa) {
+                url += `&cooperativa_nombre=${cooperativa}`;
+            } else if (categoria) {
+                url += `&category=${categoria}`;
+            }
+            
+            console.log("🔍 Consultando API:", url);
+            const res = await fetch(url);
+            
+            if (!res.ok) {
+                const error = await res.json();
+                throw new Error(error.detail || 'Error en la API');
+            }
+            
             const result = await res.json();
+            console.log("✅ Datos obtenidos:", result.length, "registros");
 
-            const agrupados = {};
+            // Acumular valores por indicador/mes para hacer promedio después
+            const acumulados = {};
+            const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+            
             result.forEach(row => {
                 const key = row.nombre_camel + '|' + row.nombre_indicador;
-                if (!agrupados[key]) {
-                    agrupados[key] = {
+                if (!acumulados[key]) {
+                    acumulados[key] = {
                         Tipo: row.nombre_camel,
                         Indicador: row.nombre_indicador,
-                        Enero: null, Febrero: null, Marzo: null, Abril: null,
-                        Mayo: null, Junio: null, Julio: null, Agosto: null,
-                        Septiembre: null, Octubre: null, Noviembre: null, Diciembre: null
+                        Enero: [], Febrero: [], Marzo: [], Abril: [],
+                        Mayo: [], Junio: [], Julio: [], Agosto: [],
+                        Septiembre: [], Octubre: [], Noviembre: [], Diciembre: []
                     };
                 }
-                const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
-                    'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-                agrupados[key][meses[row.mes - 1]] = row.valor;
+                // Acumular valor en el array del mes correspondiente
+                const nombreMes = meses[row.mes - 1];
+                acumulados[key][nombreMes].push(row.valor);
+            });
+
+            // Convertir arrays a promedios
+            const agrupados = {};
+            Object.keys(acumulados).forEach(key => {
+                agrupados[key] = {
+                    Tipo: acumulados[key].Tipo,
+                    Indicador: acumulados[key].Indicador,
+                    Enero: null, Febrero: null, Marzo: null, Abril: null,
+                    Mayo: null, Junio: null, Julio: null, Agosto: null,
+                    Septiembre: null, Octubre: null, Noviembre: null, Diciembre: null
+                };
+                
+                meses.forEach(mes => {
+                    const valores = acumulados[key][mes];
+                    if (valores.length > 0) {
+                        const promedio = valores.reduce((a, b) => a + b, 0) / valores.length;
+                        agrupados[key][mes] = promedio;
+                        console.log(`  📊 ${key} - ${mes}: ${valores.length} valor(es) → promedio ${promedio.toFixed(4)}`);
+                    }
+                });
             });
 
             const datosFinales = Object.values(agrupados).map(fila => {
@@ -258,15 +364,16 @@ const Home = () => {
             setTimeout(() => aplicarIndicadoresGuardados(), 100);
 
         } catch (err) {
-            alert('Error al consultar la API: ' + err.message);
+            setFilterError('Error al consultar la API: ' + err.message);
+            console.error("❌ Error:", err);
         } finally {
-            setCargando(false);
+            setLoading(false);
         }
     };
 
-    // Cargar datos automáticamente si hay cooperativa y año seleccionados
+    // Cargar datos automáticamente si hay cooperativa/categoría y año seleccionados
     useEffect(() => {
-        if (cooperativa !== 'No seleccionada' && year !== 'No seleccionado' && datos.length === 0) {
+        if (ano && (cooperativa || categoria) && datos.length === 0) {
             fetchData();
         }
     }, []);
@@ -276,16 +383,93 @@ const Home = () => {
             <Header title="CAMEL Model - Consulta de Indicadores"/>
             <div className="main-content">
                 <div className="info-display">
-                    <h3>Cooperativa Seleccionada: {cooperativa}</h3>
-                    <h3>Año: {year}</h3>
-                    <p><em>Para cambiar la cooperativa o año, ve a la página de "Cálculo de IRL y Solvencia"</em></p>
-                    <button 
-                        onClick={fetchData} 
-                        disabled={cargando}
-                        className="btn-consultar"
-                    >
-                        {cargando ? 'Cargando...' : 'Consultar Datos'}
-                    </button>
+                    <h3>Filtros de Búsqueda</h3>
+                    
+                    <div className="filters-container">
+                        {/* Filtro Categoría */}
+                        <div className="filter-group">
+                            <label>Categoría: {cooperativa && <span style={{color: 'red'}}>(deshabilitado)</span>}</label>
+                            <select 
+                                value={categoria} 
+                                onChange={(e) => {
+                                    setCategoria(e.target.value);
+                                    setCooperativa(""); // Resetear cooperativa cuando cambio categoría
+                                }}
+                                disabled={cooperativa !== ""}
+                            >
+                                <option value="">-- Seleccionar Categoría --</option>
+                                {categorias.map((cat, idx) => (
+                                    <option key={idx} value={cat}>{cat}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        {/* Filtro Cooperativa */}
+                        <div className="filter-group">
+                            <label>Cooperativa: {categoria && <span style={{color: 'red'}}>(deshabilitado)</span>}</label>
+                            <select 
+                                value={cooperativa} 
+                                onChange={(e) => {
+                                    setCooperativa(e.target.value);
+                                    if (e.target.value) {
+                                        setCategoria(""); // Resetear categoría cuando selecciono cooperativa
+                                    }
+                                }}
+                                disabled={categoria !== "" || cooperativas.length === 0}
+                            >
+                                <option value="">-- Seleccionar Cooperativa --</option>
+                                {cooperativas.map((coop, idx) => (
+                                    <option key={idx} value={coop.name}>{coop.name}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        {/* Filtro Año */}
+                        <div className="filter-group">
+                            <label>Año: <span style={{color: 'red'}}>*</span></label>
+                            <select 
+                                value={ano} 
+                                onChange={(e) => setAno(e.target.value)}
+                            >
+                                <option value="">-- Seleccionar Año --</option>
+                                {anos.map((year, idx) => (
+                                    <option key={idx} value={year}>{year}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+
+                    {/* Botón Buscar - FUERA DEL GRID */}
+                    <div style={{marginTop: '15px', display: 'flex', gap: '10px', alignItems: 'center'}}>
+                        <button 
+                            className="search-button"
+                            onClick={fetchData}
+                            disabled={!ano || (!categoria && !cooperativa) || (categoria && cooperativa) || loading}
+                        >
+                            {loading ? "⏳ Buscando..." : "🔍 Buscar"}
+                        </button>
+                        {!ano ? (
+                            <span style={{color: '#856404', fontSize: '13px'}}>
+                                ⚠️ Selecciona un Año
+                            </span>
+                        ) : (!categoria && !cooperativa) ? (
+                            <span style={{color: '#856404', fontSize: '13px'}}>
+                                ⚠️ Selecciona Categoría O Cooperativa (no ambas)
+                            </span>
+                        ) : null}
+                    </div>
+
+                    {filterError && (
+                        <div className="warning-message">
+                            <p>⚠️ {filterError}</p>
+                        </div>
+                    )}
+
+                    {loading && (
+                        <div className="loading-message">
+                            <p>⏳ Cargando datos...</p>
+                        </div>
+                    )}
                 </div>
                 <Tablero
                     columnas={columnas}

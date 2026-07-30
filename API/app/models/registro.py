@@ -1,12 +1,12 @@
-from sqlalchemy import Column, Integer, String, Float,ForeignKey
+from sqlalchemy import Column, Integer, Float, ForeignKey
 from app.database import Base
 
 class Registro(Base):
-    __tablename__ = "registro"
+    __tablename__ = "camel_record"
 
-    ID_registro = Column(Integer, primary_key=True, index=True)
-    ID_indicador = Column(Integer, ForeignKey("indicador.ID_indicador"), index=True)
-    ID_cooperativa = Column(Integer, ForeignKey("cooperativa.ID_cooperativa"), index=True)
-    ano = Column(Integer, index=True)
-    mes = Column(Integer, index=True)
-    valor = Column(Float, index=True)
+    id_record = Column(Integer, primary_key=True, index=True)
+    id_indicator = Column(Integer, ForeignKey("camel_indicator.id_indicator"), index=True)
+    id_cooperative = Column(Integer, ForeignKey("cooperative.id_cooperative"), index=True)
+    year = Column(Integer, index=True)
+    month = Column(Integer, index=True)
+    value = Column(Float, index=True)

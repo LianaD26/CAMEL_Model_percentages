@@ -1,0 +1,829 @@
+{
+  "fecha_calculo": "2026-07-30T08:39:44.042155",
+  "pca_general": {
+    "nombre": "GENERAL (Todas las categorías)",
+    "cantidad_cooperativas": 138,
+    "cantidad_registros": 8280,
+    "pesos": {
+      "Relación entre Aportes sociales mínimos no reducibles y Capital Social": {
+        "peso_porcentaje": 11.64,
+        "importancia": 0.333785,
+        "promedio": 0.633,
+        "desviacion_estandar": 0.215
+      },
+      "Indicador de Margen Financiero de Operación": {
+        "peso_porcentaje": 10.25,
+        "importancia": 0.293933,
+        "promedio": 0.7181,
+        "desviacion_estandar": 0.1417
+      },
+      "Indicador de Cobertura de la Cartera Total en Riesgo": {
+        "peso_porcentaje": 8.85,
+        "importancia": 0.25398,
+        "promedio": 0.0593,
+        "desviacion_estandar": 0.0356
+      },
+      "Indicador de relación entre las obligaciones financieras y el pasivo total": {
+        "peso_porcentaje": 8.65,
+        "importancia": 0.248128,
+        "promedio": 0.0466,
+        "desviacion_estandar": 0.0789
+      },
+      "Relación entre el Capital Institucional y el Activo Total": {
+        "peso_porcentaje": 8.15,
+        "importancia": 0.233768,
+        "promedio": 0.092,
+        "desviacion_estandar": 0.054
+      },
+      "Indicador de Cobertura individual de la cartera improductiva para la cartera en Riesgo": {
+        "peso_porcentaje": 7.95,
+        "importancia": 0.228027,
+        "promedio": 0.4494,
+        "desviacion_estandar": 0.3857
+      },
+      "Indicador de calidad por riesgo": {
+        "peso_porcentaje": 7.81,
+        "importancia": 0.223894,
+        "promedio": 0.0768,
+        "desviacion_estandar": 0.0476
+      },
+      "Estructura de Balance": {
+        "peso_porcentaje": 7.53,
+        "importancia": 0.215913,
+        "promedio": 1.8418,
+        "desviacion_estandar": 1.0963
+      },
+      "Quebranto Patrimonial": {
+        "peso_porcentaje": 5.69,
+        "importancia": 0.163338,
+        "promedio": 1.5776,
+        "desviacion_estandar": 0.529
+      },
+      "Activo Productivo": {
+        "peso_porcentaje": 5.11,
+        "importancia": 0.146622,
+        "promedio": 0.8428,
+        "desviacion_estandar": 0.1018
+      },
+      "Indicador de margen neto": {
+        "peso_porcentaje": 3.72,
+        "importancia": 0.106662,
+        "promedio": 0.1284,
+        "desviacion_estandar": 0.1612
+      },
+      "Indicador de rentabilidad sobre el capital invertido - ROIC": {
+        "peso_porcentaje": 3.72,
+        "importancia": 0.106672,
+        "promedio": 0.1398,
+        "desviacion_estandar": 0.1959
+      },
+      "Indicador de rentabilidad sobre recursos propios - ROE": {
+        "peso_porcentaje": 3.72,
+        "importancia": 0.106643,
+        "promedio": 0.4389,
+        "desviacion_estandar": 0.6673
+      },
+      "Indicador de Margen Operacional": {
+        "peso_porcentaje": 3.6,
+        "importancia": 0.103317,
+        "promedio": 0.0863,
+        "desviacion_estandar": 0.1566
+      },
+      "Indicador de calidad por riesgo con castigos": {
+        "peso_porcentaje": 3.19,
+        "importancia": 0.091633,
+        "promedio": 0.0395,
+        "desviacion_estandar": 0.0549
+      },
+      "Activos líquidos ampliados / depósitos a corto plazo": {
+        "peso_porcentaje": 0.42,
+        "importancia": 0.011955,
+        "promedio": 0.9858,
+        "desviacion_estandar": 3.6954
+      }
+    }
+  },
+  "pca_por_categoria": {
+    "Grandes": {
+      "nombre": "Grandes",
+      "cantidad_cooperativas": 19,
+      "cantidad_registros": 1140,
+      "pesos": {
+        "Relación entre Aportes sociales mínimos no reducibles y Capital Social": {
+          "peso_porcentaje": 10.8,
+          "importancia": 0.344249,
+          "promedio": 0.5744,
+          "desviacion_estandar": 0.2431
+        },
+        "Relación entre el Capital Institucional y el Activo Total": {
+          "peso_porcentaje": 9.01,
+          "importancia": 0.287047,
+          "promedio": 0.0785,
+          "desviacion_estandar": 0.0529
+        },
+        "Quebranto Patrimonial": {
+          "peso_porcentaje": 8.69,
+          "importancia": 0.276878,
+          "promedio": 1.4463,
+          "desviacion_estandar": 0.3562
+        },
+        "Indicador de Margen Financiero de Operación": {
+          "peso_porcentaje": 8.14,
+          "importancia": 0.259282,
+          "promedio": 0.6753,
+          "desviacion_estandar": 0.1578
+        },
+        "Indicador de relación entre las obligaciones financieras y el pasivo total": {
+          "peso_porcentaje": 7.97,
+          "importancia": 0.254131,
+          "promedio": 0.036,
+          "desviacion_estandar": 0.0777
+        },
+        "Estructura de Balance": {
+          "peso_porcentaje": 6.96,
+          "importancia": 0.221945,
+          "promedio": 1.6494,
+          "desviacion_estandar": 0.6559
+        },
+        "Activos líquidos ampliados / depósitos a corto plazo": {
+          "peso_porcentaje": 6.0,
+          "importancia": 0.191096,
+          "promedio": 0.7474,
+          "desviacion_estandar": 0.5265
+        },
+        "Indicador de Cobertura individual de la cartera improductiva para la cartera en Riesgo": {
+          "peso_porcentaje": 5.58,
+          "importancia": 0.177827,
+          "promedio": 0.4417,
+          "desviacion_estandar": 0.3512
+        },
+        "Activo Productivo": {
+          "peso_porcentaje": 5.56,
+          "importancia": 0.177328,
+          "promedio": 0.8416,
+          "desviacion_estandar": 0.1151
+        },
+        "Indicador de Cobertura de la Cartera Total en Riesgo": {
+          "peso_porcentaje": 5.4,
+          "importancia": 0.171954,
+          "promedio": 0.0499,
+          "desviacion_estandar": 0.0326
+        },
+        "Indicador de calidad por riesgo con castigos": {
+          "peso_porcentaje": 5.03,
+          "importancia": 0.160316,
+          "promedio": 0.0504,
+          "desviacion_estandar": 0.0993
+        },
+        "Indicador de Margen Operacional": {
+          "peso_porcentaje": 4.65,
+          "importancia": 0.148295,
+          "promedio": 0.0544,
+          "desviacion_estandar": 0.161
+        },
+        "Indicador de calidad por riesgo": {
+          "peso_porcentaje": 4.64,
+          "importancia": 0.147957,
+          "promedio": 0.0787,
+          "desviacion_estandar": 0.0509
+        },
+        "Indicador de margen neto": {
+          "peso_porcentaje": 4.62,
+          "importancia": 0.147112,
+          "promedio": 0.0994,
+          "desviacion_estandar": 0.1618
+        },
+        "Indicador de rentabilidad sobre recursos propios - ROE": {
+          "peso_porcentaje": 3.68,
+          "importancia": 0.117143,
+          "promedio": 0.3643,
+          "desviacion_estandar": 0.6487
+        },
+        "Indicador de rentabilidad sobre el capital invertido - ROIC": {
+          "peso_porcentaje": 3.27,
+          "importancia": 0.104133,
+          "promedio": 0.1263,
+          "desviacion_estandar": 0.2574
+        }
+      }
+    },
+    "Medianas": {
+      "nombre": "Medianas",
+      "cantidad_cooperativas": 53,
+      "cantidad_registros": 3180,
+      "pesos": {
+        "Indicador de calidad por riesgo con castigos": {
+          "peso_porcentaje": 10.39,
+          "importancia": 0.313121,
+          "promedio": 0.0347,
+          "desviacion_estandar": 0.033
+        },
+        "Indicador de Margen Financiero de Operación": {
+          "peso_porcentaje": 9.31,
+          "importancia": 0.280476,
+          "promedio": 0.7117,
+          "desviacion_estandar": 0.1378
+        },
+        "Relación entre Aportes sociales mínimos no reducibles y Capital Social": {
+          "peso_porcentaje": 8.6,
+          "importancia": 0.259004,
+          "promedio": 0.6852,
+          "desviacion_estandar": 0.1754
+        },
+        "Relación entre el Capital Institucional y el Activo Total": {
+          "peso_porcentaje": 8.47,
+          "importancia": 0.255312,
+          "promedio": 0.0913,
+          "desviacion_estandar": 0.0496
+        },
+        "Estructura de Balance": {
+          "peso_porcentaje": 7.63,
+          "importancia": 0.229794,
+          "promedio": 1.8473,
+          "desviacion_estandar": 1.2174
+        },
+        "Indicador de Cobertura de la Cartera Total en Riesgo": {
+          "peso_porcentaje": 7.61,
+          "importancia": 0.229318,
+          "promedio": 0.0633,
+          "desviacion_estandar": 0.0405
+        },
+        "Indicador de Cobertura individual de la cartera improductiva para la cartera en Riesgo": {
+          "peso_porcentaje": 7.18,
+          "importancia": 0.216322,
+          "promedio": 0.4459,
+          "desviacion_estandar": 0.3833
+        },
+        "Indicador de calidad por riesgo": {
+          "peso_porcentaje": 6.9,
+          "importancia": 0.207944,
+          "promedio": 0.0815,
+          "desviacion_estandar": 0.0511
+        },
+        "Indicador de relación entre las obligaciones financieras y el pasivo total": {
+          "peso_porcentaje": 6.72,
+          "importancia": 0.202339,
+          "promedio": 0.0557,
+          "desviacion_estandar": 0.0845
+        },
+        "Quebranto Patrimonial": {
+          "peso_porcentaje": 5.67,
+          "importancia": 0.170928,
+          "promedio": 1.6885,
+          "desviacion_estandar": 0.6938
+        },
+        "Activo Productivo": {
+          "peso_porcentaje": 5.48,
+          "importancia": 0.165048,
+          "promedio": 0.8471,
+          "desviacion_estandar": 0.1137
+        },
+        "Indicador de Margen Operacional": {
+          "peso_porcentaje": 4.63,
+          "importancia": 0.139508,
+          "promedio": 0.0833,
+          "desviacion_estandar": 0.1408
+        },
+        "Indicador de margen neto": {
+          "peso_porcentaje": 4.09,
+          "importancia": 0.123222,
+          "promedio": 0.114,
+          "desviacion_estandar": 0.1499
+        },
+        "Indicador de rentabilidad sobre el capital invertido - ROIC": {
+          "peso_porcentaje": 3.66,
+          "importancia": 0.110295,
+          "promedio": 0.1172,
+          "desviacion_estandar": 0.1594
+        },
+        "Indicador de rentabilidad sobre recursos propios - ROE": {
+          "peso_porcentaje": 3.09,
+          "importancia": 0.093255,
+          "promedio": 0.4279,
+          "desviacion_estandar": 0.6971
+        },
+        "Activos líquidos ampliados / depósitos a corto plazo": {
+          "peso_porcentaje": 0.57,
+          "importancia": 0.017264,
+          "promedio": 1.2792,
+          "desviacion_estandar": 5.8562
+        }
+      }
+    },
+    "Megas": {
+      "nombre": "Megas",
+      "cantidad_cooperativas": 5,
+      "cantidad_registros": 300,
+      "pesos": {
+        "Indicador de calidad por riesgo con castigos": {
+          "peso_porcentaje": 8.7,
+          "importancia": 0.29043,
+          "promedio": 0.0477,
+          "desviacion_estandar": 0.044
+        },
+        "Indicador de Cobertura de la Cartera Total en Riesgo": {
+          "peso_porcentaje": 8.64,
+          "importancia": 0.28874,
+          "promedio": 0.0553,
+          "desviacion_estandar": 0.0342
+        },
+        "Activos líquidos ampliados / depósitos a corto plazo": {
+          "peso_porcentaje": 8.27,
+          "importancia": 0.276361,
+          "promedio": 0.5693,
+          "desviacion_estandar": 0.3659
+        },
+        "Relación entre el Capital Institucional y el Activo Total": {
+          "peso_porcentaje": 7.8,
+          "importancia": 0.260636,
+          "promedio": 0.059,
+          "desviacion_estandar": 0.0235
+        },
+        "Indicador de calidad por riesgo": {
+          "peso_porcentaje": 7.73,
+          "importancia": 0.258189,
+          "promedio": 0.0663,
+          "desviacion_estandar": 0.0341
+        },
+        "Estructura de Balance": {
+          "peso_porcentaje": 7.46,
+          "importancia": 0.249037,
+          "promedio": 1.7274,
+          "desviacion_estandar": 0.4758
+        },
+        "Indicador de relación entre las obligaciones financieras y el pasivo total": {
+          "peso_porcentaje": 7.3,
+          "importancia": 0.243683,
+          "promedio": 0.0401,
+          "desviacion_estandar": 0.0457
+        },
+        "Quebranto Patrimonial": {
+          "peso_porcentaje": 6.59,
+          "importancia": 0.219986,
+          "promedio": 1.2903,
+          "desviacion_estandar": 0.1064
+        },
+        "Indicador de Margen Financiero de Operación": {
+          "peso_porcentaje": 6.29,
+          "importancia": 0.210164,
+          "promedio": 0.6778,
+          "desviacion_estandar": 0.1423
+        },
+        "Activo Productivo": {
+          "peso_porcentaje": 6.2,
+          "importancia": 0.206972,
+          "promedio": 0.8597,
+          "desviacion_estandar": 0.0631
+        },
+        "Indicador de margen neto": {
+          "peso_porcentaje": 4.74,
+          "importancia": 0.158301,
+          "promedio": 0.116,
+          "desviacion_estandar": 0.1642
+        },
+        "Indicador de rentabilidad sobre el capital invertido - ROIC": {
+          "peso_porcentaje": 4.59,
+          "importancia": 0.153416,
+          "promedio": 0.1034,
+          "desviacion_estandar": 0.1511
+        },
+        "Indicador de Margen Operacional": {
+          "peso_porcentaje": 4.4,
+          "importancia": 0.147103,
+          "promedio": 0.06,
+          "desviacion_estandar": 0.1083
+        },
+        "Indicador de rentabilidad sobre recursos propios - ROE": {
+          "peso_porcentaje": 4.1,
+          "importancia": 0.137074,
+          "promedio": 0.2238,
+          "desviacion_estandar": 0.2912
+        },
+        "Relación entre Aportes sociales mínimos no reducibles y Capital Social": {
+          "peso_porcentaje": 3.73,
+          "importancia": 0.124713,
+          "promedio": 0.5964,
+          "desviacion_estandar": 0.1721
+        },
+        "Indicador de Cobertura individual de la cartera improductiva para la cartera en Riesgo": {
+          "peso_porcentaje": 3.45,
+          "importancia": 0.115252,
+          "promedio": 0.5231,
+          "desviacion_estandar": 0.4154
+        }
+      }
+    },
+    "Micro 1": {
+      "nombre": "Micro 1",
+      "cantidad_cooperativas": 28,
+      "cantidad_registros": 1680,
+      "pesos": {
+        "Relación entre Aportes sociales mínimos no reducibles y Capital Social": {
+          "peso_porcentaje": 9.02,
+          "importancia": 0.281146,
+          "promedio": 0.6014,
+          "desviacion_estandar": 0.2172
+        },
+        "Relación entre el Capital Institucional y el Activo Total": {
+          "peso_porcentaje": 8.81,
+          "importancia": 0.274618,
+          "promedio": 0.094,
+          "desviacion_estandar": 0.0572
+        },
+        "Indicador de Margen Financiero de Operación": {
+          "peso_porcentaje": 8.56,
+          "importancia": 0.266882,
+          "promedio": 0.7179,
+          "desviacion_estandar": 0.1469
+        },
+        "Indicador de relación entre las obligaciones financieras y el pasivo total": {
+          "peso_porcentaje": 8.23,
+          "importancia": 0.256724,
+          "promedio": 0.0382,
+          "desviacion_estandar": 0.0781
+        },
+        "Quebranto Patrimonial": {
+          "peso_porcentaje": 7.4,
+          "importancia": 0.230803,
+          "promedio": 1.5318,
+          "desviacion_estandar": 0.415
+        },
+        "Indicador de calidad por riesgo": {
+          "peso_porcentaje": 7.14,
+          "importancia": 0.222765,
+          "promedio": 0.0733,
+          "desviacion_estandar": 0.0424
+        },
+        "Estructura de Balance": {
+          "peso_porcentaje": 6.77,
+          "importancia": 0.211229,
+          "promedio": 1.9703,
+          "desviacion_estandar": 1.2467
+        },
+        "Indicador de Cobertura de la Cartera Total en Riesgo": {
+          "peso_porcentaje": 6.77,
+          "importancia": 0.211004,
+          "promedio": 0.055,
+          "desviacion_estandar": 0.0289
+        },
+        "Activo Productivo": {
+          "peso_porcentaje": 6.42,
+          "importancia": 0.200269,
+          "promedio": 0.8374,
+          "desviacion_estandar": 0.0912
+        },
+        "Indicador de Cobertura individual de la cartera improductiva para la cartera en Riesgo": {
+          "peso_porcentaje": 5.34,
+          "importancia": 0.166637,
+          "promedio": 0.4307,
+          "desviacion_estandar": 0.3708
+        },
+        "Indicador de calidad por riesgo con castigos": {
+          "peso_porcentaje": 5.27,
+          "importancia": 0.164264,
+          "promedio": 0.0344,
+          "desviacion_estandar": 0.0451
+        },
+        "Indicador de rentabilidad sobre el capital invertido - ROIC": {
+          "peso_porcentaje": 4.95,
+          "importancia": 0.154432,
+          "promedio": 0.1718,
+          "desviacion_estandar": 0.2014
+        },
+        "Indicador de rentabilidad sobre recursos propios - ROE": {
+          "peso_porcentaje": 4.52,
+          "importancia": 0.140838,
+          "promedio": 0.4769,
+          "desviacion_estandar": 0.6492
+        },
+        "Activos líquidos ampliados / depósitos a corto plazo": {
+          "peso_porcentaje": 4.29,
+          "importancia": 0.133892,
+          "promedio": 0.8701,
+          "desviacion_estandar": 1.0438
+        },
+        "Indicador de Margen Operacional": {
+          "peso_porcentaje": 3.38,
+          "importancia": 0.105423,
+          "promedio": 0.0999,
+          "desviacion_estandar": 0.1895
+        },
+        "Indicador de margen neto": {
+          "peso_porcentaje": 3.12,
+          "importancia": 0.097425,
+          "promedio": 0.1526,
+          "desviacion_estandar": 0.1763
+        }
+      }
+    },
+    "Micro 2": {
+      "nombre": "Micro 2",
+      "cantidad_cooperativas": 19,
+      "cantidad_registros": 1140,
+      "pesos": {
+        "Relación entre Aportes sociales mínimos no reducibles y Capital Social": {
+          "peso_porcentaje": 9.58,
+          "importancia": 0.2993,
+          "promedio": 0.6834,
+          "desviacion_estandar": 0.2188
+        },
+        "Indicador de relación entre las obligaciones financieras y el pasivo total": {
+          "peso_porcentaje": 8.64,
+          "importancia": 0.270171,
+          "promedio": 0.0559,
+          "desviacion_estandar": 0.0753
+        },
+        "Activo Productivo": {
+          "peso_porcentaje": 7.35,
+          "importancia": 0.229834,
+          "promedio": 0.8396,
+          "desviacion_estandar": 0.083
+        },
+        "Indicador de calidad por riesgo con castigos": {
+          "peso_porcentaje": 7.34,
+          "importancia": 0.229429,
+          "promedio": 0.0412,
+          "desviacion_estandar": 0.0435
+        },
+        "Relación entre el Capital Institucional y el Activo Total": {
+          "peso_porcentaje": 7.3,
+          "importancia": 0.228221,
+          "promedio": 0.1084,
+          "desviacion_estandar": 0.065
+        },
+        "Quebranto Patrimonial": {
+          "peso_porcentaje": 7.27,
+          "importancia": 0.227112,
+          "promedio": 1.5313,
+          "desviacion_estandar": 0.3499
+        },
+        "Indicador de Cobertura individual de la cartera improductiva para la cartera en Riesgo": {
+          "peso_porcentaje": 7.0,
+          "importancia": 0.218747,
+          "promedio": 0.4622,
+          "desviacion_estandar": 0.4142
+        },
+        "Indicador de Margen Financiero de Operación": {
+          "peso_porcentaje": 7.0,
+          "importancia": 0.218906,
+          "promedio": 0.7623,
+          "desviacion_estandar": 0.1351
+        },
+        "Indicador de Cobertura de la Cartera Total en Riesgo": {
+          "peso_porcentaje": 6.3,
+          "importancia": 0.196831,
+          "promedio": 0.0628,
+          "desviacion_estandar": 0.0375
+        },
+        "Indicador de calidad por riesgo": {
+          "peso_porcentaje": 6.12,
+          "importancia": 0.191315,
+          "promedio": 0.0775,
+          "desviacion_estandar": 0.0547
+        },
+        "Indicador de rentabilidad sobre recursos propios - ROE": {
+          "peso_porcentaje": 5.01,
+          "importancia": 0.156677,
+          "promedio": 0.4298,
+          "desviacion_estandar": 0.5762
+        },
+        "Estructura de Balance": {
+          "peso_porcentaje": 4.96,
+          "importancia": 0.154949,
+          "promedio": 2.0289,
+          "desviacion_estandar": 1.2161
+        },
+        "Activos líquidos ampliados / depósitos a corto plazo": {
+          "peso_porcentaje": 4.3,
+          "importancia": 0.134297,
+          "promedio": 0.8072,
+          "desviacion_estandar": 0.9784
+        },
+        "Indicador de rentabilidad sobre el capital invertido - ROIC": {
+          "peso_porcentaje": 4.15,
+          "importancia": 0.129777,
+          "promedio": 0.1482,
+          "desviacion_estandar": 0.2081
+        },
+        "Indicador de margen neto": {
+          "peso_porcentaje": 4.04,
+          "importancia": 0.126323,
+          "promedio": 0.1308,
+          "desviacion_estandar": 0.1744
+        },
+        "Indicador de Margen Operacional": {
+          "peso_porcentaje": 3.64,
+          "importancia": 0.113651,
+          "promedio": 0.1051,
+          "desviacion_estandar": 0.1476
+        }
+      }
+    },
+    "Pequeñas": {
+      "nombre": "Pequeñas",
+      "cantidad_cooperativas": 13,
+      "cantidad_registros": 780,
+      "pesos": {
+        "Relación entre el Capital Institucional y el Activo Total": {
+          "peso_porcentaje": 9.07,
+          "importancia": 0.291807,
+          "promedio": 0.1004,
+          "desviacion_estandar": 0.0478
+        },
+        "Relación entre Aportes sociales mínimos no reducibles y Capital Social": {
+          "peso_porcentaje": 9.03,
+          "importancia": 0.290675,
+          "promedio": 0.5062,
+          "desviacion_estandar": 0.2354
+        },
+        "Indicador de Cobertura de la Cartera Total en Riesgo": {
+          "peso_porcentaje": 7.59,
+          "importancia": 0.244362,
+          "promedio": 0.0626,
+          "desviacion_estandar": 0.0247
+        },
+        "Estructura de Balance": {
+          "peso_porcentaje": 7.31,
+          "importancia": 0.235253,
+          "promedio": 1.6581,
+          "desviacion_estandar": 0.516
+        },
+        "Indicador de Margen Financiero de Operación": {
+          "peso_porcentaje": 7.21,
+          "importancia": 0.232094,
+          "promedio": 0.7646,
+          "desviacion_estandar": 0.0939
+        },
+        "Quebranto Patrimonial": {
+          "peso_porcentaje": 7.18,
+          "importancia": 0.231038,
+          "promedio": 1.5942,
+          "desviacion_estandar": 0.3926
+        },
+        "Indicador de calidad por riesgo con castigos": {
+          "peso_porcentaje": 6.96,
+          "importancia": 0.22393,
+          "promedio": 0.0455,
+          "desviacion_estandar": 0.0684
+        },
+        "Activos líquidos ampliados / depósitos a corto plazo": {
+          "peso_porcentaje": 6.48,
+          "importancia": 0.208456,
+          "promedio": 0.8485,
+          "desviacion_estandar": 0.5892
+        },
+        "Indicador de margen neto": {
+          "peso_porcentaje": 6.23,
+          "importancia": 0.200491,
+          "promedio": 0.1848,
+          "desviacion_estandar": 0.1313
+        },
+        "Indicador de Cobertura individual de la cartera improductiva para la cartera en Riesgo": {
+          "peso_porcentaje": 5.78,
+          "importancia": 0.186018,
+          "promedio": 0.4732,
+          "desviacion_estandar": 0.4149
+        },
+        "Indicador de calidad por riesgo": {
+          "peso_porcentaje": 5.03,
+          "importancia": 0.161765,
+          "promedio": 0.0663,
+          "desviacion_estandar": 0.0259
+        },
+        "Indicador de relación entre las obligaciones financieras y el pasivo total": {
+          "peso_porcentaje": 4.89,
+          "importancia": 0.157293,
+          "promedio": 0.0218,
+          "desviacion_estandar": 0.0522
+        },
+        "Indicador de rentabilidad sobre el capital invertido - ROIC": {
+          "peso_porcentaje": 4.57,
+          "importancia": 0.147116,
+          "promedio": 0.1897,
+          "desviacion_estandar": 0.1991
+        },
+        "Activo Productivo": {
+          "peso_porcentaje": 4.42,
+          "importancia": 0.142128,
+          "promedio": 0.8417,
+          "desviacion_estandar": 0.0861
+        },
+        "Indicador de rentabilidad sobre recursos propios - ROE": {
+          "peso_porcentaje": 4.2,
+          "importancia": 0.13517,
+          "promedio": 0.6076,
+          "desviacion_estandar": 0.797
+        },
+        "Indicador de Margen Operacional": {
+          "peso_porcentaje": 4.07,
+          "importancia": 0.131039,
+          "promedio": 0.1069,
+          "desviacion_estandar": 0.1547
+        }
+      }
+    },
+    "Top 4": {
+      "nombre": "Top 4",
+      "cantidad_cooperativas": 1,
+      "cantidad_registros": 60,
+      "pesos": {
+        "Indicador de Margen Financiero de Operación": {
+          "peso_porcentaje": 8.79,
+          "importancia": 0.3099,
+          "promedio": 0.6401,
+          "desviacion_estandar": 0.0973
+        },
+        "Indicador de calidad por riesgo con castigos": {
+          "peso_porcentaje": 8.29,
+          "importancia": 0.292382,
+          "promedio": 0.0766,
+          "desviacion_estandar": 0.0254
+        },
+        "Activo Productivo": {
+          "peso_porcentaje": 7.9,
+          "importancia": 0.278374,
+          "promedio": 0.7816,
+          "desviacion_estandar": 0.0884
+        },
+        "Estructura de Balance": {
+          "peso_porcentaje": 7.73,
+          "importancia": 0.272384,
+          "promedio": 1.0249,
+          "desviacion_estandar": 0.1139
+        },
+        "Indicador de relación entre las obligaciones financieras y el pasivo total": {
+          "peso_porcentaje": 7.37,
+          "importancia": 0.259729,
+          "promedio": 0.1841,
+          "desviacion_estandar": 0.0685
+        },
+        "Relación entre Aportes sociales mínimos no reducibles y Capital Social": {
+          "peso_porcentaje": 7.23,
+          "importancia": 0.254726,
+          "promedio": 0.7469,
+          "desviacion_estandar": 0.1274
+        },
+        "Indicador de calidad por riesgo": {
+          "peso_porcentaje": 6.51,
+          "importancia": 0.229566,
+          "promedio": 0.0671,
+          "desviacion_estandar": 0.0191
+        },
+        "Indicador de rentabilidad sobre el capital invertido - ROIC": {
+          "peso_porcentaje": 6.09,
+          "importancia": 0.214669,
+          "promedio": 0.0751,
+          "desviacion_estandar": 0.0628
+        },
+        "Indicador de Cobertura de la Cartera Total en Riesgo": {
+          "peso_porcentaje": 6.01,
+          "importancia": 0.211925,
+          "promedio": 0.0558,
+          "desviacion_estandar": 0.0089
+        },
+        "Indicador de rentabilidad sobre recursos propios - ROE": {
+          "peso_porcentaje": 5.82,
+          "importancia": 0.205183,
+          "promedio": 0.4374,
+          "desviacion_estandar": 0.4255
+        },
+        "Indicador de margen neto": {
+          "peso_porcentaje": 5.24,
+          "importancia": 0.184692,
+          "promedio": 0.052,
+          "desviacion_estandar": 0.0375
+        },
+        "Indicador de Margen Operacional": {
+          "peso_porcentaje": 5.23,
+          "importancia": 0.184431,
+          "promedio": -0.0211,
+          "desviacion_estandar": 0.0373
+        },
+        "Quebranto Patrimonial": {
+          "peso_porcentaje": 5.21,
+          "importancia": 0.183821,
+          "promedio": 1.577,
+          "desviacion_estandar": 0.0738
+        },
+        "Indicador de Cobertura individual de la cartera improductiva para la cartera en Riesgo": {
+          "peso_porcentaje": 4.51,
+          "importancia": 0.159147,
+          "promedio": 0.3838,
+          "desviacion_estandar": 0.3916
+        },
+        "Activos líquidos ampliados / depósitos a corto plazo": {
+          "peso_porcentaje": 4.38,
+          "importancia": 0.154542,
+          "promedio": 0.4657,
+          "desviacion_estandar": 0.0569
+        },
+        "Relación entre el Capital Institucional y el Activo Total": {
+          "peso_porcentaje": 3.69,
+          "importancia": 0.129976,
+          "promedio": 0.0709,
+          "desviacion_estandar": 0.0035
+        }
+      }
+    }
+  }
+}

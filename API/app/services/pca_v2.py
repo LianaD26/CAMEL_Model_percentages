@@ -115,7 +115,7 @@ def generar_pca_completo(db: Session):
     }
     
     # --- 1. Calcular PCA GENERAL (todas las categorías) ---
-    print("Calculando PCA GENERAL...")
+    print("📊 Calculando PCA GENERAL...")
     df_general = cargar_datos_desde_db(db, categoria=None)
     
     if not df_general.empty:
@@ -127,18 +127,18 @@ def generar_pca_completo(db: Session):
                 "cantidad_registros": int(len(df_general)),
                 "pesos": pca_general
             }
-            print(f"[OK] PCA GENERAL calculado: {resultados_completos['pca_general']['cantidad_cooperativas']} cooperativas")
+            print(f"✅ PCA GENERAL calculado: {resultados_completos['pca_general']['cantidad_cooperativas']} cooperativas")
     
     # --- 2. Obtener categorías únicas ---
     from app.models.cooperativa import Cooperativa
     query_categorias = db.query(Cooperativa.category).distinct().all()
     categorias = [cat[0] for cat in query_categorias if cat[0]]
     
-    print(f"\nEncontradas {len(categorias)} categorías")
+    print(f"\n📁 Encontradas {len(categorias)} categorías")
     
     # --- 3. Calcular PCA por cada categoría ---
     for categoria in sorted(categorias):
-        print(f"Calculando PCA para: {categoria}")
+        print(f"📊 Calculando PCA para: {categoria}")
         df_categoria = cargar_datos_desde_db(db, categoria=categoria)
         
         if not df_categoria.empty:
@@ -151,14 +151,14 @@ def generar_pca_completo(db: Session):
                     "cantidad_registros": int(len(df_categoria)),
                     "pesos": pca_categoria
                 }
-                print(f"   [OK] {resultados_completos['pca_por_categoria'][categoria]['cantidad_cooperativas']} cooperativas")
+                print(f"   ✅ {resultados_completos['pca_por_categoria'][categoria]['cantidad_cooperativas']} cooperativas")
     
     # --- 4. Guardar en archivo JSON ---
     os.makedirs(PCA_RESULTS_DIR, exist_ok=True)
     with open(PCA_RESULTS_FILE, 'w', encoding='utf-8') as f:
         json.dump(resultados_completos, f, indent=2, ensure_ascii=False)
     
-    print(f"\nResultados guardados en: {PCA_RESULTS_FILE}")
+    print(f"\n💾 Resultados guardados en: {PCA_RESULTS_FILE}")
     
     return resultados_completos
 
@@ -172,7 +172,7 @@ def cargar_pca_desde_archivo():
     """
     
     if not os.path.exists(PCA_RESULTS_FILE):
-        print(f"[WARNING] Archivo PCA no encontrado: {PCA_RESULTS_FILE}")
+        print(f"⚠️  Archivo PCA no encontrado: {PCA_RESULTS_FILE}")
         return {}
     
     with open(PCA_RESULTS_FILE, 'r', encoding='utf-8') as f:
@@ -219,49 +219,3 @@ def obtener_todos_pca():
         Dict con estructura completa de PCA
     """
     return cargar_pca_desde_archivo()
-
-
-# Función legada para compatibilidad
-def promedio_indicadores():
-    """
-    Función legada para compatibilidad.
-    Carga resultados PCA general desde archivo.
-    """
-    
-    resultados = cargar_pca_desde_archivo()
-    
-    if not resultados:
-        return pd.DataFrame()
-    
-    pca_general = resultados.get("pca_general", {}).get("pesos", {})
-    
-    # Convertir a DataFrame para compatibilidad
-    df_resultado = []
-    for indicador, datos in pca_general.items():
-        df_resultado.append({
-            "Indicador": indicador,
-            "Peso (%)": datos.get("peso_porcentaje", 0),
-            "Peso Decimal": datos.get("peso_porcentaje", 0) / 100,
-            "Promedio": datos.get("promedio", 0),
-            "Importancia_PCA": datos.get("importancia", 0)
-        })
-    
-    return pd.DataFrame(df_resultado)
-
-    X_scaled = scaler.fit_transform(X_imputed)
-    
-    # PCA
-    pca = PCA(n_components=min(n_componentes, df_pivot.shape[1]))
-    pca.fit(X_scaled)
-    
-    loadings = pd.DataFrame(
-        pca.components_.T,
-        index=df_pivot.columns
-    )
-    
-    pesos = (loadings**2).mean(axis=1)
-    
-    # porcentaje
-    pesos = (pesos / pesos.sum()) 
-    
-    return pesos.sort_values(ascending=False)
