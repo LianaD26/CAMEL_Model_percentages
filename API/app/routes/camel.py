@@ -1,14 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from typing import List, Dict
+from typing import List, Dict, Optional
 from app.database import get_db
 from app.models.camel import Camel
 from app.schemas.camel import CamelSchema
 from app.services.pca import (
-    promedio_indicadores,
-    obtener_todos_pca,
-    generar_pca_completo,
-    cargar_pca_desde_archivo
+    calcular_y_guardar_pesos_pca
 )
 from app.services.percentiles import (
     obtener_todos_percentiles,
@@ -16,6 +13,7 @@ from app.services.percentiles import (
     cargar_percentiles_desde_archivo
 )
 import pandas as pd
+import json
 
 from .. import database
 
@@ -25,68 +23,86 @@ router = APIRouter(prefix="/camels", tags=["camels"])
 def get_all_camels(db: Session = Depends(get_db)):
     return db.query(Camel).all()
 
-@router.get("/prom")
-def obtener_pca_mensual():
-    """Endpoint para obtener los resultados del PCA mensual (compatibilidad)."""
-    resultados_df = promedio_indicadores()
-    return resultados_df.to_dict(orient="records")
-
-@router.get("/pca/todos")
-def obtener_todos_pca_endpoint():
+@router.post("/pca/calcular-nuevo")
+def calcular_pca_nuevo_endpoint(
+    anio: Optional[int] = Query(None, description="Año específico para filtrar (opcional)"),
+    n_componentes: int = Query(3, description="Número de componentes PCA"),
+    db: Session = Depends(get_db)
+):
     """
-    Obtiene todos los resultados de PCA calculados.
-    Incluye PCA general y por cada categoría.
+    Calcula pesos PCA usando la nueva función optimizada.
+    Conecta: BD → cargar_datos_pca → pca.py → JSON
+    
+    Parámetros:
+        - anio: Año específico (opcional, si no se envía trae todos)
+        - n_componentes: Número de componentes PCA (default: 3)
     
     Returns:
-        Dict con estructura:
-        {
-            "fecha_calculo": "ISO datetime",
-            "pca_general": {...},
-            "pca_por_categoria": {
-                "categoria1": {...},
-                "categoria2": {...},
-                ...
-            }
-        }
-    """
-    resultados = obtener_todos_pca()
-    
-    if not resultados:
-        raise HTTPException(
-            status_code=404,
-            detail="No se han calculado resultados de PCA. Ejecuta primero /camels/pca/generar"
-        )
-    
-    return resultados
-
-@router.post("/pca/generar")
-def generar_pca_endpoint(db: Session = Depends(get_db)):
-    """
-    Genera y calcula PCA para:
-    1. Categoría general (todas las cooperativas)
-    2. Cada categoría individual
-    
-    Guarda los resultados en archivo JSON.
-    
-    Returns:
-        Dict con resultados generados
+        Dict con resultados calculados y guardados en JSON
     """
     try:
-        resultados = generar_pca_completo(db)
-        return {
-            "status": "success",
-            "mensaje": "PCA calculado y guardado correctamente",
-            "resumen": {
-                "cantidad_pca_general": 1 if resultados.get("pca_general") else 0,
-                "cantidad_pca_categorias": len(resultados.get("pca_por_categoria", {})),
-                "total_pca_calculados": 1 + len(resultados.get("pca_por_categoria", {}))
-            },
-            "datos": resultados
-        }
+        resultado = calcular_y_guardar_pesos_pca(
+            db=db,
+            anio=anio,
+            n_componentes=n_componentes
+        )
+        
+        if resultado.get("exito"):
+            return {
+                "status": "success",
+                "mensaje": resultado.get("mensaje"),
+                "anio": anio,
+                "n_componentes": n_componentes,
+                "resultados": resultado.get("resultados"),
+                "detalles_guardado": resultado.get("guardado")
+            }
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail=resultado.get("error", "Error desconocido al calcular PCA")
+            )
     except Exception as e:
         raise HTTPException(
             status_code=500,
-            detail=f"Error al generar PCA: {str(e)}"
+            detail=f"Error al calcular PCA: {str(e)}"
+        )
+
+
+@router.get("/pca/resultados-json")
+def obtener_resultados_pca_json():
+    """
+    Obtiene los resultados del PCA guardados en JSON.
+    Lee directamente desde API/data/pca_resultados.json
+    
+    Returns:
+        Dict con todos los resultados de PCA guardados
+    """
+    try:
+        from pathlib import Path
+        
+        base_dir = Path(__file__).parent.parent.parent
+        ruta_json = base_dir / "data" / "pca_resultados.json"
+        
+        if not ruta_json.exists():
+            raise HTTPException(
+                status_code=404,
+                detail="No hay resultados de PCA calculados. Ejecuta primero POST /camels/pca/calcular-nuevo"
+            )
+        
+        with open(ruta_json, "r", encoding="utf-8") as f:
+            resultados = json.load(f)
+        
+        return {
+            "status": "success",
+            "ruta": str(ruta_json),
+            "datos": resultados
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error al obtener resultados: {str(e)}"
         )
 
 
@@ -147,4 +163,44 @@ def generar_percentiles_endpoint(db: Session = Depends(get_db)):
         raise HTTPException(
             status_code=500,
             detail=f"Error al generar percentiles: {str(e)}"
+        )
+
+
+@router.get("/percentiles/resultados-json")
+def obtener_percentiles_json_enriquecidos(db: Session = Depends(get_db)):
+    """
+    Obtiene los percentiles calculados con metadata enriquecida
+    (nombre del indicador y categoría CAMEL).
+    
+    Returns:
+        Dict con percentiles enriquecidos
+    """
+    try:
+        from app.services.percentiles import (
+            cargar_percentiles_desde_archivo,
+            enriquecer_percentiles_con_metadata
+        )
+        
+        # Cargar percentiles desde archivo
+        percentiles = cargar_percentiles_desde_archivo()
+        
+        if not percentiles:
+            raise HTTPException(
+                status_code=404,
+                detail="No hay resultados de percentiles calculados. Ejecuta primero POST /camels/percentiles/generar"
+            )
+        
+        # Enriquecer con metadata
+        percentiles_enriquecidos = enriquecer_percentiles_con_metadata(db, percentiles)
+        
+        return {
+            "status": "success",
+            "datos": percentiles_enriquecidos
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error al obtener percentiles: {str(e)}"
         )

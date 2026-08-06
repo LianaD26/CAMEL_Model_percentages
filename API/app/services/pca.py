@@ -1,257 +1,74 @@
-"""
-Módulo de cálculo de PCA mejorado.
-Genera PCA para categoría general y por categoría individual.
-Guarda resultados en archivo JSON para acceso desde frontend.
-"""
-
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.decomposition import PCA
 import pandas as pd
 import json
-import os
+from pathlib import Path
 from datetime import datetime
-from app.services.cargar_datos_pca import cargar_datos_desde_db
 from sqlalchemy.orm import Session
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from app.services.cargar_datos_pca import (
+    obtener_datos_pca_por_categoria,
+    obtener_todas_las_categorias
+)
 
-# Ruta del archivo JSON donde se guardarán los resultados
-PCA_RESULTS_DIR = os.path.join(os.path.dirname(__file__), "../../data")
-PCA_RESULTS_FILE = os.path.join(PCA_RESULTS_DIR, "pca_resultados.json")
 
-
-def calcular_pca_para_categoria(df_datos, nombre_categoria="GENERAL"):
-    """
-    Calcula PCA para un conjunto de datos específico.
+def pesos_pca_grupo_coops(
+    df,
+    lista_coops,
+    col_nombre="ID_cooperativa",
+    nombre_col_categoria="categoria",
+    categoria="General",
+    n_componentes=3
+):
     
-    Args:
-        df_datos: DataFrame con datos pivotados (indicadores como columnas)
-        nombre_categoria: Nombre de la categoría (para referencia)
+    # filtrar cooperativas
+    df_filtrado = df[df[col_nombre].isin(lista_coops)].copy()
     
-    Returns:
-        Dict con resultados PCA: {indicador: {peso: %, importancia: float, ...}, ...}
-    """
+    # Si NO es General, filtrar por categoría específica
+    if categoria != "General":
+        df_filtrado = df_filtrado[df_filtrado[nombre_col_categoria] == categoria].copy()
     
-    if df_datos.empty:
-        return {}
+    if df_filtrado.empty:
+        raise ValueError("No hay datos para las cooperativas indicadas")
     
-    # --- 1. Seleccionar columnas numéricas (indicadores) ---
-    indicadores = [
-        col for col in df_datos.columns if col not in [
-            "ano", "mes", "id_cooperativa", "cooperativa_nombre", 
-            "categoria", "id_indicador", "Periodo"
-        ]
-    ]
-    
-    if not indicadores:
-        return {}
-    
-    # --- 2. Limpiar datos (remover NaN) ---
-    df_limpios = df_datos[indicadores].dropna()
-    
-    if df_limpios.empty or len(df_limpios) < 2:
-        return {}
-    
-    # --- 3. Escalar indicadores con MinMaxScaler ---
-    scaler = MinMaxScaler()
-    df_scaled = pd.DataFrame(
-        scaler.fit_transform(df_limpios),
-        columns=indicadores
+    # LIMPIEZA 
+    df_filtrado["valor"] = (
+        df_filtrado["valor"]
+        .astype(str)
+        .str.replace(",", "", regex=False)
+        .str.strip()
     )
     
-    # --- 4. Aplicar PCA ---
-    pca = PCA()
-    pca.fit(df_scaled)
+    df_filtrado["valor"] = pd.to_numeric(df_filtrado["valor"], errors="coerce")
     
-    # --- 5. Calcular cargas (importancia en componentes) ---
-    cargas = pd.DataFrame(abs(pca.components_), columns=indicadores)
+    # pivot (matriz indicadores)
+    df_pivot = df_filtrado.pivot_table(
+        index=col_nombre,
+        columns="ID_indicador",
+        values="valor",
+        aggfunc="mean"
+    )
     
-    # --- 6. Varianza explicada ---
-    varianza = pca.explained_variance_ratio_
+    # Validar que hay suficientes muestras y características
+    n_samples, n_features = df_pivot.shape
+    if n_samples < 2:
+        raise ValueError(f"Insuficientes muestras ({n_samples}) para PCA")
     
-    # --- 7. Calcular importancia ponderada por varianza ---
-    importancia = (cargas.T @ varianza).to_numpy().flatten()
+    # Ajustar n_componentes si excede los límites
+    n_comps_valido = min(n_componentes, n_samples - 1, n_features)
+    if n_comps_valido < 1:
+        raise ValueError(f"No hay suficientes datos: {n_samples} muestras, {n_features} características")
     
-    # --- 8. Calcular pesos (%) ---
-    total_importancia = importancia.sum()
-    if total_importancia == 0:
-        return {}
+    # imputar faltantes
+    imputer = SimpleImputer(strategy="mean")
+    X_imputed = imputer.fit_transform(df_pivot)
     
-    pesos = (importancia / total_importancia * 100)
-    
-    # --- 9. Construir resultado ---
-    resultado = {}
-    for idx, indicador in enumerate(indicadores):
-        resultado[indicador] = {
-            "peso_porcentaje": round(pesos[idx], 2),
-            "importancia": round(importancia[idx], 6),
-            "promedio": round(float(df_limpios[indicador].mean()), 4),
-            "desviacion_estandar": round(float(df_limpios[indicador].std()), 4)
-        }
-    
-    # Ordenar por peso descendente
-    resultado = dict(sorted(resultado.items(), key=lambda x: x[1]["peso_porcentaje"], reverse=True))
-    
-    return resultado
-
-
-def generar_pca_completo(db: Session):
-    """
-    Genera y guarda PCA para:
-    1. Todas las categorías (general)
-    2. Cada categoría individual
-    
-    Guarda los resultados en un archivo JSON.
-    
-    Args:
-        db: Sesión de base de datos
-        
-    Returns:
-        Dict con todos los resultados PCA
-    """
-    
-    resultados_completos = {
-        "fecha_calculo": datetime.now().isoformat(),
-        "pca_general": {},
-        "pca_por_categoria": {}
-    }
-    
-    # --- 1. Calcular PCA GENERAL (todas las categorías) ---
-    print("Calculando PCA GENERAL...")
-    df_general = cargar_datos_desde_db(db, categoria=None)
-    
-    if not df_general.empty:
-        pca_general = calcular_pca_para_categoria(df_general, "GENERAL")
-        if pca_general:
-            resultados_completos["pca_general"] = {
-                "nombre": "GENERAL (Todas las categorías)",
-                "cantidad_cooperativas": int(df_general["id_cooperativa"].nunique()),
-                "cantidad_registros": int(len(df_general)),
-                "pesos": pca_general
-            }
-            print(f"[OK] PCA GENERAL calculado: {resultados_completos['pca_general']['cantidad_cooperativas']} cooperativas")
-    
-    # --- 2. Obtener categorías únicas ---
-    from app.models.cooperativa import Cooperativa
-    query_categorias = db.query(Cooperativa.category).distinct().all()
-    categorias = [cat[0] for cat in query_categorias if cat[0]]
-    
-    print(f"\nEncontradas {len(categorias)} categorías")
-    
-    # --- 3. Calcular PCA por cada categoría ---
-    for categoria in sorted(categorias):
-        print(f"Calculando PCA para: {categoria}")
-        df_categoria = cargar_datos_desde_db(db, categoria=categoria)
-        
-        if not df_categoria.empty:
-            pca_categoria = calcular_pca_para_categoria(df_categoria, categoria)
-            
-            if pca_categoria:  # Solo guardar si hay resultados válidos
-                resultados_completos["pca_por_categoria"][categoria] = {
-                    "nombre": categoria,
-                    "cantidad_cooperativas": int(df_categoria["id_cooperativa"].nunique()),
-                    "cantidad_registros": int(len(df_categoria)),
-                    "pesos": pca_categoria
-                }
-                print(f"   [OK] {resultados_completos['pca_por_categoria'][categoria]['cantidad_cooperativas']} cooperativas")
-    
-    # --- 4. Guardar en archivo JSON ---
-    os.makedirs(PCA_RESULTS_DIR, exist_ok=True)
-    with open(PCA_RESULTS_FILE, 'w', encoding='utf-8') as f:
-        json.dump(resultados_completos, f, indent=2, ensure_ascii=False)
-    
-    print(f"\nResultados guardados en: {PCA_RESULTS_FILE}")
-    
-    return resultados_completos
-
-
-def cargar_pca_desde_archivo():
-    """
-    Carga los resultados de PCA desde el archivo JSON.
-    
-    Returns:
-        Dict con resultados PCA o {} si el archivo no existe
-    """
-    
-    if not os.path.exists(PCA_RESULTS_FILE):
-        print(f"[WARNING] Archivo PCA no encontrado: {PCA_RESULTS_FILE}")
-        return {}
-    
-    with open(PCA_RESULTS_FILE, 'r', encoding='utf-8') as f:
-        return json.load(f)
-
-
-def obtener_pesos_pca(categoria=None):
-    """
-    Obtiene los pesos PCA (como float 0-1) para una categoría específica.
-    
-    Args:
-        categoria: Nombre de la categoría, o None para general
-        
-    Returns:
-        Dict con {indicador: peso_decimal, ...}
-    """
-    
-    resultados = cargar_pca_desde_archivo()
-    
-    if not resultados:
-        return {}
-    
-    if categoria is None:
-        # Usar PCA general
-        pca_data = resultados.get("pca_general", {}).get("pesos", {})
-    else:
-        # Usar PCA de categoría específica
-        pca_data = resultados.get("pca_por_categoria", {}).get(categoria, {}).get("pesos", {})
-    
-    # Convertir a diccionario {indicador: peso_decimal}
-    pesos_decimales = {}
-    for indicador, datos in pca_data.items():
-        peso_porcentaje = datos.get("peso_porcentaje", 0)
-        pesos_decimales[indicador.replace("_", " ").upper().strip()] = peso_porcentaje / 100
-    
-    return pesos_decimales
-
-
-def obtener_todos_pca():
-    """
-    Retorna todos los resultados PCA (general + por categoría).
-    
-    Returns:
-        Dict con estructura completa de PCA
-    """
-    return cargar_pca_desde_archivo()
-
-
-# Función legada para compatibilidad
-def promedio_indicadores():
-    """
-    Función legada para compatibilidad.
-    Carga resultados PCA general desde archivo.
-    """
-    
-    resultados = cargar_pca_desde_archivo()
-    
-    if not resultados:
-        return pd.DataFrame()
-    
-    pca_general = resultados.get("pca_general", {}).get("pesos", {})
-    
-    # Convertir a DataFrame para compatibilidad
-    df_resultado = []
-    for indicador, datos in pca_general.items():
-        df_resultado.append({
-            "Indicador": indicador,
-            "Peso (%)": datos.get("peso_porcentaje", 0),
-            "Peso Decimal": datos.get("peso_porcentaje", 0) / 100,
-            "Promedio": datos.get("promedio", 0),
-            "Importancia_PCA": datos.get("importancia", 0)
-        })
-    
-    return pd.DataFrame(df_resultado)
-
+    # escalar
+    scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X_imputed)
     
     # PCA
-    pca = PCA(n_components=min(n_componentes, df_pivot.shape[1]))
+    pca = PCA(n_components=n_comps_valido)
     pca.fit(X_scaled)
     
     loadings = pd.DataFrame(
@@ -265,3 +82,320 @@ def promedio_indicadores():
     pesos = (pesos / pesos.sum()) 
     
     return pesos.sort_values(ascending=False)
+
+
+# ============================================================================
+# FUNCIONES DE INTEGRACIÓN: Cálculo + Guardado de Resultados PCA
+# ============================================================================
+
+def obtener_ruta_json_resultados() -> Path:
+    """
+    Obtiene la ruta del archivo JSON de resultados PCA.
+    Crea el directorio si no existe.
+    
+    Returns:
+        Path al archivo pca_resultados.json
+    """
+    base_dir = Path(__file__).parent.parent.parent
+    data_dir = base_dir / "data"
+    data_dir.mkdir(parents=True, exist_ok=True)
+    
+    return data_dir / "pca_resultados.json"
+
+
+def calcular_pesos_pca_categoria(
+    db: Session,
+    categoria: str = None,
+    anio: int = None,
+    n_componentes: int = 3
+) -> dict:
+    """
+    Calcula los pesos PCA para una categoría específica o para todas (General).
+    
+    Args:
+        db: Sesión de SQLAlchemy
+        categoria: Categoría de cooperativas (None para "General" = todas)
+        anio: Año específico (opcional)
+        n_componentes: Número de componentes PCA
+    
+    Returns:
+        Diccionario con los pesos: {ID_indicador: peso}
+    """
+    
+    try:
+        if categoria is None:
+            # Caso General: traer todas las cooperativas sin filtrar por categoría
+            from app.services.cargar_datos_pca import obtener_datos_para_pca
+            df = obtener_datos_para_pca(db, anio=anio)
+            lista_coops = df["ID_cooperativa"].unique().tolist()
+            categoria_filtro = "General"
+        else:
+            # Caso específico: traer por categoría
+            df, lista_coops = obtener_datos_pca_por_categoria(
+                db, 
+                categoria=categoria, 
+                anio=anio
+            )
+            categoria_filtro = categoria
+        
+        # Validar que hay suficientes datos para PCA
+        if len(lista_coops) < 2:
+            return {"error": f"Insuficientes cooperativas ({len(lista_coops)}) para calcular PCA"}
+        
+        # Ajustar n_componentes si es necesario
+        n_comps_ajustado = min(n_componentes, len(lista_coops) - 1)
+        if n_comps_ajustado < 1:
+            n_comps_ajustado = 1
+        
+        pesos = pesos_pca_grupo_coops(
+            df,
+            lista_coops,
+            col_nombre="ID_cooperativa",
+            nombre_col_categoria="categoria",
+            categoria=categoria_filtro,
+            n_componentes=n_comps_ajustado
+        )
+        
+        return pesos.to_dict()
+        
+    except Exception as e:
+        return {"error": str(e)}
+
+
+def calcular_pesos_pca_todas_categorias(
+    db: Session,
+    anio: int = None,
+    n_componentes: int = 3
+) -> dict:
+    """
+    Calcula pesos PCA para TODAS las categorías INCLUYENDO la General.
+    
+    Args:
+        db: Sesión de SQLAlchemy
+        anio: Año específico (opcional)
+        n_componentes: Número de componentes PCA
+    
+    Returns:
+        Diccionario con estructura: {categoria: {ID_indicador: peso}}
+        Incluye "General" + todas las categorías individuales
+    """
+    
+    resultados = {}
+    
+    # 1. PRIMERO: Calcular PCA General (mezcla de todas las categorías)
+    pesos_general = calcular_pesos_pca_categoria(
+        db,
+        categoria=None,  # None = todas las cooperativas
+        anio=anio,
+        n_componentes=n_componentes
+    )
+    resultados["General"] = pesos_general
+    
+    # 2. LUEGO: Calcular PCA para cada categoría individual
+    categorias = obtener_todas_las_categorias(db)
+    for categoria in categorias:
+        pesos = calcular_pesos_pca_categoria(
+            db,
+            categoria=categoria,
+            anio=anio,
+            n_componentes=n_componentes
+        )
+        resultados[categoria] = pesos
+    
+    return resultados
+
+
+def guardar_resultados_pca_json(
+    resultados: dict,
+    anio: int = None,
+    timestamp: bool = True
+) -> dict:
+    """
+    Guarda los resultados PCA en JSON (SOBRESCRIBE archivo anterior).
+    
+    Args:
+        resultados: Diccionario con los pesos PCA
+        anio: Año para metadata (opcional)
+        timestamp: Si incluir timestamp en los resultados
+    
+    Returns:
+        Diccionario con información del guardado
+    """
+    
+    ruta_json = obtener_ruta_json_resultados()
+    
+    # Preparar entrada con metadata
+    entrada = {
+        "resultados": resultados,
+        "anio": anio,
+    }
+    
+    if timestamp:
+        entrada["timestamp"] = datetime.now().isoformat()
+    
+    # SOBRESCRIBIR: Crear diccionario limpio sin datos antiguos
+    datos_completos = {
+        "ultimoCalculo": entrada
+    }
+    
+    # Escribir archivo (SOBRESCRIBE completamente)
+    with open(ruta_json, "w", encoding="utf-8") as f:
+        json.dump(datos_completos, f, indent=2, ensure_ascii=False)
+    
+    return {
+        "exito": True,
+        "ruta": str(ruta_json),
+        "clave_guardada": "ultimoCalculo",
+        "categorias_guardadas": list(resultados.keys())
+    }
+
+
+def calcular_y_guardar_pesos_pca(
+    db: Session,
+    anio: int = None,
+    n_componentes: int = 3
+) -> dict:
+    """
+    FUNCIÓN PRINCIPAL: Calcula pesos PCA para todas las categorías
+    y los guarda en JSON automáticamente con metadata enriquecida.
+    
+    Conecta: cargar_datos_pca → pca.py → enriquecimiento → JSON
+    
+    Args:
+        db: Sesión de SQLAlchemy
+        anio: Año específico (opcional)
+        n_componentes: Número de componentes PCA
+    
+    Returns:
+        Diccionario con resumen del proceso
+    """
+    
+    try:
+        # 1. Calcular pesos para todas las categorías
+        resultados = calcular_pesos_pca_todas_categorias(
+            db,
+            anio=anio,
+            n_componentes=n_componentes
+        )
+        
+        # 2. Enriquecer resultados con metadata
+        resultados_enriquecidos = enriquecer_resultados_pca(
+            db,
+            resultados,
+            anio=anio
+        )
+        
+        # 3. Guardar en JSON
+        info_guardado = guardar_resultados_pca_json(
+            resultados_enriquecidos,
+            anio=anio,
+            timestamp=True
+        )
+        
+        return {
+            "exito": True,
+            "mensaje": f"PCA calculado y guardado exitosamente",
+            "resultados": resultados_enriquecidos,
+            "guardado": info_guardado
+        }
+        
+    except Exception as e:
+        return {
+            "exito": False,
+            "mensaje": f"Error al calcular y guardar PCA: {str(e)}",
+            "error": str(e)
+        }
+
+
+def enriquecer_resultados_pca(
+    db: Session,
+    resultados_pca: dict,
+    anio: int = None
+) -> dict:
+    """
+    Enriquece los resultados PCA con metadata: cantidad de cooperativas, 
+    registros, nombre del indicador y categoría CAMEL.
+    
+    Args:
+        db: Sesión de SQLAlchemy
+        resultados_pca: Diccionario con {categoria: {ID_indicador: peso}}
+        anio: Año específico (opcional)
+    
+    Returns:
+        Diccionario enriquecido con estructura:
+        {
+            categoria: {
+                cantidad_cooperativas: int,
+                cantidad_registros: int,
+                pesos: {
+                    ID_indicador: {
+                        nombre_indicador: str,
+                        categoria_camel: str,
+                        peso: float,
+                        peso_porcentaje: float
+                    }
+                }
+            }
+        }
+    """
+    from app.models.indicador import Indicador
+    from app.models.camel import Camel
+    from app.services.cargar_datos_pca import obtener_datos_pca_por_categoria, obtener_datos_para_pca
+    
+    resultado_enriquecido = {}
+    
+    # Obtener mapeo de ID_indicador -> (nombre, categoría CAMEL)
+    indicadores_info = {}
+    indicadores_db = db.query(Indicador).all()
+    for ind in indicadores_db:
+        camel = db.query(Camel).filter(Camel.id_camel == ind.id_camel).first()
+        categoria_camel = camel.name if camel else "Desconocida"
+        indicadores_info[ind.id_indicator] = {
+            "nombre": ind.name,
+            "categoria_camel": categoria_camel
+        }
+    
+    # Procesar cada categoría de cooperativas
+    for categoria, pesos_dict in resultados_pca.items():
+        if "error" in pesos_dict:
+            continue
+        
+        # Obtener datos para calcular cantidad de cooperativas y registros
+        try:
+            if categoria.lower() == "general":
+                df = obtener_datos_para_pca(db, anio=anio)
+                lista_coops = df["ID_cooperativa"].unique().tolist()
+            else:
+                df, lista_coops = obtener_datos_pca_por_categoria(db, categoria=categoria, anio=anio)
+            
+            cantidad_cooperativas = len(lista_coops)
+            cantidad_registros = len(df)
+            
+            # Enriquecer pesos con información de indicadores
+            pesos_enriquecidos = {}
+            for id_indicador, peso in pesos_dict.items():
+                id_ind_int = int(id_indicador) if isinstance(id_indicador, str) else id_indicador
+                
+                info_ind = indicadores_info.get(id_ind_int, {
+                    "nombre": f"Indicador {id_indicador}",
+                    "categoria_camel": "Desconocida"
+                })
+                
+                pesos_enriquecidos[str(id_indicador)] = {
+                    "nombre_indicador": info_ind["nombre"],
+                    "categoria_camel": info_ind["categoria_camel"],
+                    "peso": peso,
+                    "peso_porcentaje": round(peso * 100, 2)
+                }
+            
+            resultado_enriquecido[categoria] = {
+                "cantidad_cooperativas": cantidad_cooperativas,
+                "cantidad_registros": cantidad_registros,
+                "pesos": pesos_enriquecidos
+            }
+            
+        except Exception as e:
+            print(f"Error enriqueciendo categoría {categoria}: {str(e)}")
+            continue
+    
+    return resultado_enriquecido

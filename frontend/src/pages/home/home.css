@@ -244,3 +244,73 @@
     background-color: #44aa44 !important;
     font-weight: bold;
 }
+
+/* ======== BUSCADOR DE COOPERATIVAS ======== */
+.cooperativa-filter-container {
+    display: flex;
+    align-items: stretch;
+    border: 2px solid #dee2e6;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: white;
+    transition: all 0.3s ease;
+}
+
+.cooperativa-filter-container:hover {
+    border-color: #001F3F;
+    box-shadow: 0 2px 8px rgba(0, 31, 63, 0.1);
+}
+
+.cooperativa-filter-container:focus-within {
+    border-color: #0066cc;
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+
+.buscar-cooperativa {
+    flex: 0 1 auto;
+    padding: 10px 12px;
+    border: none;
+    background-color: transparent;
+    color: #333;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    min-width: 150px;
+}
+
+.buscar-cooperativa:focus {
+    outline: none;
+}
+
+.buscar-cooperativa:disabled {
+    background-color: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+.buscar-cooperativa::placeholder {
+    color: #999;
+}
+
+.cooperativa-filter-container select {
+    flex: 1;
+    padding: 10px 12px;
+    border: none;
+    border-left: 1px solid #dee2e6;
+    background-color: transparent;
+    color: #333;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cooperativa-filter-container select:focus {
+    outline: none;
+}
+
+.cooperativa-filter-container select:disabled {
+    background-color: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.65;
+}

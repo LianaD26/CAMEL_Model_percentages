@@ -270,3 +270,118 @@ def obtener_todos_percentiles():
         Dict con estructura completa de percentiles
     """
     return cargar_percentiles_desde_archivo()
+
+
+def enriquecer_percentiles_con_metadata(db: Session, percentiles_dict: dict) -> dict:
+    """
+    Enriquece los percentiles con metadata: nombre del indicador y categoría CAMEL.
+    
+    Los percentiles pueden tener como claves:
+    - IDs de indicador (números)
+    - Nombres de indicador (strings)
+    
+    Args:
+        db: Sesión de SQLAlchemy
+        percentiles_dict: Diccionario con percentiles calculados
+    
+    Returns:
+        Diccionario enriquecido con: nombre_indicador, categoria_camel
+    """
+    from app.models.indicador import Indicador
+    from app.models.camel import Camel
+    
+    # Obtener mapeo de ID_indicador -> (nombre, categoría CAMEL)
+    # También crear mapeo inverso: nombre -> ID y categoría CAMEL
+    indicadores_info_por_id = {}
+    indicadores_info_por_nombre = {}
+    
+    indicadores_db = db.query(Indicador).all()
+    for ind in indicadores_db:
+        camel = db.query(Camel).filter(Camel.id_camel == ind.id_camel).first()
+        categoria_camel = camel.name if camel else "Desconocida"
+        info = {
+            "nombre": ind.name,
+            "categoria_camel": categoria_camel
+        }
+        indicadores_info_por_id[ind.id_indicator] = info
+        indicadores_info_por_nombre[ind.name] = info
+    
+    resultado_enriquecido = {}
+    
+    # Enriquecer percentiles_generales
+    if "percentiles_generales" in percentiles_dict and percentiles_dict["percentiles_generales"]:
+        pct_gen = percentiles_dict["percentiles_generales"]
+        pct_gen_enriquecidos = {}
+        
+        if "percentiles" in pct_gen:
+            for clave_indicador, valores_pct in pct_gen["percentiles"].items():
+                # Determinar si la clave es un ID o un nombre
+                info_ind = None
+                if clave_indicador.isdigit():
+                    # Es un ID
+                    id_ind_int = int(clave_indicador)
+                    info_ind = indicadores_info_por_id.get(id_ind_int)
+                else:
+                    # Es un nombre
+                    info_ind = indicadores_info_por_nombre.get(clave_indicador)
+                
+                # Default si no se encuentra
+                if not info_ind:
+                    info_ind = {
+                        "nombre": clave_indicador,
+                        "categoria_camel": "Desconocida"
+                    }
+                
+                pct_gen_enriquecidos[str(clave_indicador)] = {
+                    "nombre_indicador": info_ind["nombre"],
+                    "categoria_camel": info_ind["categoria_camel"],
+                    **valores_pct
+                }
+        
+        resultado_enriquecido["percentiles_generales"] = {
+            "nombre": pct_gen.get("nombre"),
+            "cantidad_cooperativas": pct_gen.get("cantidad_cooperativas"),
+            "cantidad_registros": pct_gen.get("cantidad_registros"),
+            "percentiles": pct_gen_enriquecidos
+        }
+    
+    # Enriquecer percentiles_por_categoria
+    if "percentiles_por_categoria" in percentiles_dict:
+        resultado_enriquecido["percentiles_por_categoria"] = {}
+        
+        for categoria, datos_cat in percentiles_dict["percentiles_por_categoria"].items():
+            pct_cat_enriquecidos = {}
+            
+            if "percentiles" in datos_cat:
+                for clave_indicador, valores_pct in datos_cat["percentiles"].items():
+                    # Determinar si la clave es un ID o un nombre
+                    info_ind = None
+                    if clave_indicador.isdigit():
+                        # Es un ID
+                        id_ind_int = int(clave_indicador)
+                        info_ind = indicadores_info_por_id.get(id_ind_int)
+                    else:
+                        # Es un nombre
+                        info_ind = indicadores_info_por_nombre.get(clave_indicador)
+                    
+                    # Default si no se encuentra
+                    if not info_ind:
+                        info_ind = {
+                            "nombre": clave_indicador,
+                            "categoria_camel": "Desconocida"
+                        }
+                    
+                    pct_cat_enriquecidos[str(clave_indicador)] = {
+                        "nombre_indicador": info_ind["nombre"],
+                        "categoria_camel": info_ind["categoria_camel"],
+                        **valores_pct
+                    }
+            
+            resultado_enriquecido["percentiles_por_categoria"][categoria] = {
+                "nombre": datos_cat.get("nombre"),
+                "cantidad_cooperativas": datos_cat.get("cantidad_cooperativas"),
+                "cantidad_registros": datos_cat.get("cantidad_registros"),
+                "percentiles": pct_cat_enriquecidos
+            }
+    
+    return resultado_enriquecido

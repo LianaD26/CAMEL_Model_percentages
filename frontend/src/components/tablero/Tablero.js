@@ -11,7 +11,7 @@ const Tablero = ({ columnas, datos, obtenerClaseRiesgo, onRiesgoChange }) => {
     ];
     
     // Columnas que NO deben multiplicarse por 100 (ya están en porcentaje o en sus unidades correctas)
-    const columnasNoMultiplicar = ['Peso (%)', 'Promedio', 'Desv. Est.'];
+    const columnasNoMultiplicar = ['Peso (%)', 'Desv. Est.'];
 
     // Formatea y multiplica por 100 solo si NO está en la lista de excepciones
     const formatearNumero = (valor, fila, columna) => {
@@ -28,11 +28,39 @@ const Tablero = ({ columnas, datos, obtenerClaseRiesgo, onRiesgoChange }) => {
         const noMultiplicar = noMultiplicarPorColumna || noMultiplicarPorIndicador;
         
         if (typeof valor === 'number') {
-            return noMultiplicar ? valor.toFixed(5) : (valor * 100).toFixed(5);
+            const formateado = noMultiplicar ? valor.toFixed(2) : (valor * 100).toFixed(2);
+            // Agregar % si se multiplicó por 100
+            return noMultiplicar ? formateado : `${formateado}%`;
         }
         if (typeof valor === 'string' && !isNaN(valor)) {
             const numeroValor = parseFloat(valor);
-            return noMultiplicar ? numeroValor.toFixed(5) : (numeroValor * 100).toFixed(5);
+            const formateado = noMultiplicar ? numeroValor.toFixed(2) : (numeroValor * 100).toFixed(2);
+            // Agregar % si se multiplicó por 100
+            return noMultiplicar ? formateado : `${formateado}%`;
+        }
+        return valor;
+    };
+    
+    // Formatea número para input (sin símbolo %)
+    const formatearNumeroParaInput = (valor, fila, columna) => {
+        if (valor === null || valor === undefined || valor === '') {
+            return '';
+        }
+        
+        // Verificar si esta columna NO debe multiplicarse por 100
+        const noMultiplicarPorColumna = columnasNoMultiplicar.includes(columna);
+        
+        // Verificar si este indicador NO debe multiplicarse por 100
+        const noMultiplicarPorIndicador = fila && indicadoresSinMultiplicar.includes(fila.Indicador);
+        
+        const noMultiplicar = noMultiplicarPorColumna || noMultiplicarPorIndicador;
+        
+        if (typeof valor === 'number') {
+            return noMultiplicar ? valor.toFixed(2) : (valor * 100).toFixed(2);
+        }
+        if (typeof valor === 'string' && !isNaN(valor)) {
+            const numeroValor = parseFloat(valor);
+            return noMultiplicar ? numeroValor.toFixed(2) : (numeroValor * 100).toFixed(2);
         }
         return valor;
     };
@@ -48,25 +76,28 @@ const Tablero = ({ columnas, datos, obtenerClaseRiesgo, onRiesgoChange }) => {
         // Si es una columna de riesgo, hacer editable
         if (columna === 'Riesgo Alto' || columna === 'Riesgo Bajo') {
             return (
-                <input
-                    type="number"
-                    step="0.00001"
-                    value={formatearNumero(valor, fila, columna)}
-                    onChange={(e) => handleRiesgoChange(filaIndex, columna, e.target.value)}
-                    onBlur={(e) => {
-                        const valorFormateado = parseFloat(e.target.value).toFixed(5);
-                        handleRiesgoChange(filaIndex, columna, valorFormateado);
-                    }}
-                    className="riesgo-input"
-                    style={{
-                        width: '100%',
-                        border: 'none',
-                        background: 'transparent',
-                        textAlign: 'center',
-                        fontSize: 'inherit',
-                        color: 'inherit'
-                    }}
-                />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <input
+                        type="number"
+                        step="0.01"
+                        value={formatearNumeroParaInput(valor, fila, columna)}
+                        onChange={(e) => handleRiesgoChange(filaIndex, columna, e.target.value)}
+                        onBlur={(e) => {
+                            const valorFormateado = parseFloat(e.target.value).toFixed(2);
+                            handleRiesgoChange(filaIndex, columna, valorFormateado);
+                        }}
+                        className="riesgo-input"
+                        style={{
+                            width: '100%',
+                            border: 'none',
+                            background: 'transparent',
+                            textAlign: 'center',
+                            fontSize: 'inherit',
+                            color: 'inherit'
+                        }}
+                    />
+                    <span style={{ minWidth: '12px' }}>%</span>
+                </div>
             );
         }
         // Para otras columnas, mostrar normalmente

@@ -64,16 +64,71 @@ const CamelValue = () => {
             setLoadingPCA(true);
             setErrorPCA(null);
             try {
-                const response = await fetch(`${API_URL}/camels/pca/todos`);
+                const response = await fetch(`${API_URL}/camels/pca/resultados-json`);
                 if (!response.ok) {
                     throw new Error("No se han calculado resultados de PCA aún");
                 }
                 const data = await response.json();
-                setResultadosPCA(data);
-                console.log("📊 Resultados PCA cargados:", data);
+                console.log("📊 Datos crudos del API:", data);
+                
+                // Estructura esperada: data.datos.ultimoCalculo.resultados
+                // resultados es un objeto: { "General": {...}, "Micro 1": {...}, ... }
+                if (data.datos && data.datos.ultimoCalculo && data.datos.ultimoCalculo.resultados) {
+                    const resultadosProcesados = {
+                        pca_general: {
+                            nombre: "GENERAL (Todas las categorías)",
+                            cantidad_cooperativas: 0,
+                            cantidad_registros: 0,
+                            pesos: {}
+                        },
+                        pca_por_categoria: {}
+                    };
+
+                    const resultados = data.datos.ultimoCalculo.resultados;
+                    
+                    // Procesar cada categoría del JSON
+                    Object.entries(resultados).forEach(([categoria, datosCategoria]) => {
+                        // datosCategoria tiene: cantidad_cooperativas, cantidad_registros, pesos
+                        const pesos = {};
+                        
+                        if (datosCategoria.pesos) {
+                            Object.entries(datosCategoria.pesos).forEach(([idIndicador, datosPeso]) => {
+                                // datosPeso tiene: nombre_indicador, categoria_camel, peso, peso_porcentaje
+                                const nombreIndicador = datosPeso.nombre_indicador || `Indicador ${idIndicador}`;
+                                
+                                pesos[nombreIndicador] = {
+                                    peso_porcentaje: datosPeso.peso_porcentaje,
+                                    importancia: datosPeso.peso,
+                                    categoria_camel: datosPeso.categoria_camel,
+                                    promedio: 0,
+                                    desviacion_estandar: 0
+                                };
+                            });
+                        }
+
+                        // Asignar a General o a categoría específica
+                        if (categoria.toLowerCase() === "general") {
+                            resultadosProcesados.pca_general.pesos = pesos;
+                            resultadosProcesados.pca_general.cantidad_cooperativas = datosCategoria.cantidad_cooperativas || 0;
+                            resultadosProcesados.pca_general.cantidad_registros = datosCategoria.cantidad_registros || 0;
+                        } else {
+                            resultadosProcesados.pca_por_categoria[categoria] = {
+                                nombre: categoria,
+                                cantidad_cooperativas: datosCategoria.cantidad_cooperativas || 0,
+                                cantidad_registros: datosCategoria.cantidad_registros || 0,
+                                pesos: pesos
+                            };
+                        }
+                    });
+
+                    setResultadosPCA(resultadosProcesados);
+                    console.log("✅ Resultados PCA procesados:", resultadosProcesados);
+                } else {
+                    throw new Error("Formato de datos PCA inválido. Verifica la estructura del JSON.");
+                }
             } catch (err) {
                 setErrorPCA(err.message);
-                console.error("Error cargando PCA:", err);
+                console.error("❌ Error cargando PCA:", err);
             } finally {
                 setLoadingPCA(false);
             }
@@ -87,16 +142,16 @@ const CamelValue = () => {
             setLoadingPercentiles(true);
             setErrorPercentiles(null);
             try {
-                const response = await fetch(`${API_URL}/camels/percentiles/todos`);
+                const response = await fetch(`${API_URL}/camels/percentiles/resultados-json`);
                 if (!response.ok) {
                     throw new Error("No se han calculado resultados de percentiles aún");
                 }
                 const data = await response.json();
-                setResultadosPercentiles(data);
-                console.log("📈 Resultados Percentiles cargados:", data);
+                console.log("📈 Datos de percentiles cargados:", data);
+                setResultadosPercentiles(data.datos);
             } catch (err) {
                 setErrorPercentiles(err.message);
-                console.error("Error cargando percentiles:", err);
+                console.error("❌ Error cargando percentiles:", err);
             } finally {
                 setLoadingPercentiles(false);
             }
@@ -132,42 +187,59 @@ const CamelValue = () => {
         
         // Crear objeto con indicadores agrupados por categoría CAMEL
         const tablasPorCategoria = {};
+        const ordenCAMEL = ["Capital", "Assets", "Managerial", "Earnings", "Liquidity"];
         
-        Object.entries(CATEGORIAS_CAMEL).forEach(([categoria, indicadores]) => {
-            tablasPorCategoria[categoria] = [];
+        // Inicializar arrays para cada categoría CAMEL
+        ordenCAMEL.forEach(cat => {
+            tablasPorCategoria[cat] = [];
+        });
+        
+        // Procesar cada indicador enriquecido
+        Object.entries(percentiles).forEach(([idIndicador, datosPct]) => {
+            // datosPct tiene: nombre_indicador, categoria_camel, p10, p20, ..., p90
+            const nombreIndicador = datosPct.nombre_indicador || `Indicador ${idIndicador}`;
+            const categoriaCAMEL = datosPct.categoria_camel || "Desconocida";
+            const esInverso = INDICADORES_INVERSOS.includes(nombreIndicador);
             
-            indicadores.forEach(nombreIndicador => {
-                if (nombreIndicador in percentiles) {
-                    const valoresPercentiles = percentiles[nombreIndicador];
-                    const esInverso = INDICADORES_INVERSOS.includes(nombreIndicador);
-                    
-                    // Los rangos SIEMPRE en el mismo orden (P10, P20, ..., P90)
-                    const rangosBase = [
-                        { minVal: -Infinity, maxVal: valoresPercentiles.p10, calificacion: 1 },
-                        { minVal: valoresPercentiles.p10, maxVal: valoresPercentiles.p20, calificacion: 2 },
-                        { minVal: valoresPercentiles.p20, maxVal: valoresPercentiles.p30, calificacion: 3 },
-                        { minVal: valoresPercentiles.p30, maxVal: valoresPercentiles.p40, calificacion: 4 },
-                        { minVal: valoresPercentiles.p40, maxVal: valoresPercentiles.p50, calificacion: 5 },
-                        { minVal: valoresPercentiles.p50, maxVal: valoresPercentiles.p60, calificacion: 6 },
-                        { minVal: valoresPercentiles.p60, maxVal: valoresPercentiles.p70, calificacion: 7 },
-                        { minVal: valoresPercentiles.p70, maxVal: valoresPercentiles.p80, calificacion: 8 },
-                        { minVal: valoresPercentiles.p80, maxVal: valoresPercentiles.p90, calificacion: 9 },
-                        { minVal: valoresPercentiles.p90, maxVal: Infinity, calificacion: 10 },
-                    ];
-                    
-                    // Para indicadores inversos: invertir SOLO la calificación (10, 9, 8, ..., 1)
-                    const rangos = esInverso
-                        ? rangosBase.map(r => ({ ...r, calificacion: 11 - r.calificacion }))
-                        : rangosBase;
-                    
-                    tablasPorCategoria[categoria].push({
-                        indicador: nombreIndicador,
-                        rangos: rangos,
-                        percentiles: valoresPercentiles,
-                        esInverso: esInverso
-                    });
+            // Los rangos SIEMPRE en el mismo orden (P10, P20, ..., P90)
+            const rangosBase = [
+                { minVal: -Infinity, maxVal: datosPct.p10, calificacion: 1 },
+                { minVal: datosPct.p10, maxVal: datosPct.p20, calificacion: 2 },
+                { minVal: datosPct.p20, maxVal: datosPct.p30, calificacion: 3 },
+                { minVal: datosPct.p30, maxVal: datosPct.p40, calificacion: 4 },
+                { minVal: datosPct.p40, maxVal: datosPct.p50, calificacion: 5 },
+                { minVal: datosPct.p50, maxVal: datosPct.p60, calificacion: 6 },
+                { minVal: datosPct.p60, maxVal: datosPct.p70, calificacion: 7 },
+                { minVal: datosPct.p70, maxVal: datosPct.p80, calificacion: 8 },
+                { minVal: datosPct.p80, maxVal: datosPct.p90, calificacion: 9 },
+                { minVal: datosPct.p90, maxVal: Infinity, calificacion: 10 },
+            ];
+            
+            // Para indicadores inversos: invertir SOLO la calificación (10, 9, 8, ..., 1)
+            const rangos = esInverso
+                ? rangosBase.map(r => ({ ...r, calificacion: 11 - r.calificacion }))
+                : rangosBase;
+            
+            // Agregar a la categoría CAMEL correspondiente
+            if (tablasPorCategoria[categoriaCAMEL]) {
+                tablasPorCategoria[categoriaCAMEL].push({
+                    indicador: nombreIndicador,
+                    rangos: rangos,
+                    percentiles: datosPct,
+                    esInverso: esInverso
+                });
+            } else {
+                // Si la categoría no existe, ponerla en Desconocida
+                if (!tablasPorCategoria["Desconocida"]) {
+                    tablasPorCategoria["Desconocida"] = [];
                 }
-            });
+                tablasPorCategoria["Desconocida"].push({
+                    indicador: nombreIndicador,
+                    rangos: rangos,
+                    percentiles: datosPct,
+                    esInverso: esInverso
+                });
+            }
         });
         
         return tablasPorCategoria;
@@ -184,15 +256,45 @@ const CamelValue = () => {
         setPcaSeleccionado(valor);
     };
 
-    // 🔹 Crear tabla de pesos PCA
-    const datosTablaPCA = Object.entries(getPesosPCASeleccionado()).map(([indicador, datos]) => ({
-        "Indicador": indicador,
-        "Peso (%)": datos.peso_porcentaje,
-        "Promedio": datos.promedio,
-        "Desv. Est.": datos.desviacion_estandar,
-    }));
+    // 🔹 Crear tabla de pesos PCA organizados por categoría CAMEL
+    const datosTablaPCA = (() => {
+        const pesos = getPesosPCASeleccionado();
+        const datosOrdenados = [];
+        const ordenCAMEL = ["Capital", "Assets", "Managerial", "Earnings", "Liquidity"];
 
-    const columnasTableaPCA = ["Indicador", "Peso (%)", "Promedio", "Desv. Est."];
+        // Agrupar por categoría CAMEL
+        const agrupadoPorCAMEL = {};
+        Object.entries(pesos).forEach(([nombreIndicador, datos]) => {
+            const camelCategoria = datos.categoria_camel || "Desconocida";
+            if (!agrupadoPorCAMEL[camelCategoria]) {
+                agrupadoPorCAMEL[camelCategoria] = [];
+            }
+            agrupadoPorCAMEL[camelCategoria].push({
+                nombre: nombreIndicador,
+                peso_porcentaje: datos.peso_porcentaje
+            });
+        });
+
+        // Recorrer en orden CAMEL
+        ordenCAMEL.forEach(camelCategoria => {
+            if (agrupadoPorCAMEL[camelCategoria]) {
+                // Ordenar por peso descendente
+                agrupadoPorCAMEL[camelCategoria].sort((a, b) => b.peso_porcentaje - a.peso_porcentaje);
+                
+                agrupadoPorCAMEL[camelCategoria].forEach(item => {
+                    datosOrdenados.push({
+                        "Indicador": item.nombre,
+                        "Categoría CAMEL": camelCategoria,
+                        "Peso (%)": parseFloat(item.peso_porcentaje)
+                    });
+                });
+            }
+        });
+
+        return datosOrdenados;
+    })();
+
+    const columnasTableaPCA = ["Indicador", "Categoría CAMEL", "Peso (%)"];
 
     // ========== RENDER ==========
     return (

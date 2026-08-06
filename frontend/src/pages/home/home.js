@@ -11,6 +11,7 @@ const Home = () => {
     // Estados para los filtros
     const [categoria, setCategoria] = useState("");
     const [cooperativa, setCooperativa] = useState("");
+    const [busquedaCooperativa, setBusquedaCooperativa] = useState("");
     const [ano, setAno] = useState("");
     const [categorias, setCategorias] = useState([]);
     const [cooperativas, setCooperativas] = useState([]);
@@ -18,15 +19,12 @@ const Home = () => {
     const [loading, setLoading] = useState(false);
     const [filterError, setFilterError] = useState("");
 
-    // Estados originales
-    const [cooperativaOriginal] = useState(() => localStorage.getItem('cooperativaSeleccionada') || 'No seleccionada');
-    const [yearOriginal] = useState(() => localStorage.getItem('anoSeleccionado') || 'No seleccionado');
+    // Estados
     const [datos, setDatos] = useState(() => {
         const datosGuardados = localStorage.getItem('datosTabla');
         return datosGuardados ? JSON.parse(datosGuardados) : [];
     });
     const [riesgos, setRiesgos] = useState({});
-    const [cargando, setCargando] = useState(false);
 
     // Cargar años disponibles desde la API
     useEffect(() => {
@@ -70,11 +68,6 @@ const Home = () => {
         };
         cargarCooperativas();
     }, []);
-
-    // Filtrar cooperativas según la categoría seleccionada
-    const cooperativasFiltradas = categoria 
-        ? cooperativas.filter(c => c.category === categoria)
-        : cooperativas;
 
     // Debug: mostrar estado de filtros
     useEffect(() => {
@@ -180,7 +173,7 @@ const Home = () => {
     // useEffect para aplicar indicadores cuando cambien cooperativa, año o datos
     useEffect(() => {
         aplicarIndicadoresGuardados();
-    }, [cooperativa, ano, datos.length]);
+    }, [cooperativa, ano, datos.length, aplicarIndicadoresGuardados]);
 
     // useEffect para escuchar cambios en localStorage
     useEffect(() => {
@@ -201,7 +194,7 @@ const Home = () => {
             window.removeEventListener('storage', handleStorageChange);
             clearInterval(interval);
         };
-    }, [cooperativa, ano]);
+    }, [cooperativa, ano, aplicarIndicadoresGuardados]);
 
     // Formatear números (solo para valores de riesgo editables, sin redondeo para mostrar)
     const formatearNumero = (numero) => {
@@ -372,11 +365,12 @@ const Home = () => {
     };
 
     // Cargar datos automáticamente si hay cooperativa/categoría y año seleccionados
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         if (ano && (cooperativa || categoria) && datos.length === 0) {
             fetchData();
         }
-    }, []);
+    }, [ano, cooperativa, categoria]);
 
     return (
         <div className="home-page">
@@ -407,21 +401,39 @@ const Home = () => {
                         {/* Filtro Cooperativa */}
                         <div className="filter-group">
                             <label>Cooperativa: {categoria && <span style={{color: 'red'}}>(deshabilitado)</span>}</label>
-                            <select 
-                                value={cooperativa} 
-                                onChange={(e) => {
-                                    setCooperativa(e.target.value);
-                                    if (e.target.value) {
-                                        setCategoria(""); // Resetear categoría cuando selecciono cooperativa
-                                    }
-                                }}
-                                disabled={categoria !== "" || cooperativas.length === 0}
-                            >
-                                <option value="">-- Seleccionar Cooperativa --</option>
-                                {cooperativas.map((coop, idx) => (
-                                    <option key={idx} value={coop.name}>{coop.name}</option>
-                                ))}
-                            </select>
+                            
+                            <div className="cooperativa-filter-container">
+                                {/* 🔍 Buscador de cooperativas */}
+                                <input
+                                    type="text"
+                                    placeholder="🔍 Buscar..."
+                                    value={busquedaCooperativa}
+                                    onChange={(e) => setBusquedaCooperativa(e.target.value)}
+                                    disabled={categoria !== "" || cooperativas.length === 0}
+                                    className="buscar-cooperativa"
+                                />
+                                
+                                <select 
+                                    value={cooperativa} 
+                                    onChange={(e) => {
+                                        setCooperativa(e.target.value);
+                                        setBusquedaCooperativa(""); // Limpiar búsqueda al seleccionar
+                                        if (e.target.value) {
+                                            setCategoria(""); // Resetear categoría cuando selecciono cooperativa
+                                        }
+                                    }}
+                                    disabled={categoria !== "" || cooperativas.length === 0}
+                                >
+                                    <option value="">-- Seleccionar Cooperativa --</option>
+                                    {cooperativas
+                                        .filter((coop) => 
+                                            coop.name.toLowerCase().includes(busquedaCooperativa.toLowerCase())
+                                        )
+                                        .map((coop, idx) => (
+                                            <option key={idx} value={coop.name}>{coop.name}</option>
+                                        ))}
+                                </select>
+                            </div>
                         </div>
 
                         {/* Filtro Año */}
