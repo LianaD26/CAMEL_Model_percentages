@@ -2,9 +2,14 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from app.config import DATABASE_URL
+from sqlalchemy.pool import NullPool  # Para Neon pooling
 
-# Crear motor de conexión
-engine = create_engine(DATABASE_URL)
+# Crear motor de conexión con psycopg2
+engine = create_engine(
+    DATABASE_URL,
+    poolclass=NullPool,  # Usar Neon's connection pooling
+    connect_args={"connect_timeout": 10}
+)
 
 # Crear sesión local
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

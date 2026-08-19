@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 
 class CamelSchema(BaseModel):
-    ID_camel: int
-    nombre: str
+    id_camel: int
+    name: str
 
     class Config:
         from_attributes = True

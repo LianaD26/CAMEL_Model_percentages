@@ -6,7 +6,7 @@ from typing import List
 def get_unique_years(db: Session) -> List[int]:
     """Obtiene todos los años únicos de la tabla registro"""
     try:
-        result = db.query(distinct(Registro.ano)).order_by(Registro.ano).all()
+        result = db.query(distinct(Registro.year)).order_by(Registro.year).all()
         years = [year[0] for year in result if year[0] is not None]
         return years
     except Exception as e:
@@ -15,7 +15,7 @@ def get_unique_years(db: Session) -> List[int]:
 def get_years_count(db: Session) -> int:
     """Obtiene el conteo de años únicos"""
     try:
-        result = db.query(distinct(Registro.ano)).count()
+        result = db.query(distinct(Registro.year)).count()
         return result
     except Exception as e:
         raise Exception(f"Error al contar años únicos: {str(e)}")

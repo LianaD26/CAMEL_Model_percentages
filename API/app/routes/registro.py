@@ -17,26 +17,38 @@ router = APIRouter(prefix="/registros", tags=["registros"])
     operation_id="get_registros_completos_unico"
 )
 def get_registros_completos(
-    cooperativa_nombre: str,
     year: int,
+    cooperativa_nombre: str = None,
+    category: str = None,
     db: Session = Depends(get_db)
 ):
+    # Validar que se proporcione cooperativa_nombre O category, pero no ambas
+    if not cooperativa_nombre and not category:
+        raise HTTPException(status_code=400, detail="Debes proporcionar cooperativa_nombre o category")
+    if cooperativa_nombre and category:
+        raise HTTPException(status_code=400, detail="No puedes proporcionar ambos: cooperativa_nombre y category")
+    
     query = (
         db.query(
-            Registro.ID_registro.label("ID_registro"),
-            Registro.valor,
-            Registro.ano,
-            Registro.mes,
-            Indicador.nombre.label("nombre_indicador"),
-            Cooperativa.nombre.label("nombre_cooperativa"),
-            Camel.nombre.label("nombre_camel")
+            Registro.id_record.label("ID_registro"),
+            Registro.value.label("valor"),
+            Registro.year.label("ano"),
+            Registro.month.label("mes"),
+            Indicador.name.label("nombre_indicador"),
+            Cooperativa.name.label("nombre_cooperativa"),
+            Camel.name.label("nombre_camel")
         )
-        .join(Indicador, Registro.ID_indicador == Indicador.ID_indicador)
-        .join(Camel, Indicador.ID_camel == Camel.ID_camel)
-        .join(Cooperativa, Registro.ID_cooperativa == Cooperativa.ID_cooperativa)
-        .filter(Cooperativa.nombre == cooperativa_nombre)
-        .filter(Registro.ano == year)
+        .join(Indicador, Registro.id_indicator == Indicador.id_indicator)
+        .join(Camel, Indicador.id_camel == Camel.id_camel)
+        .join(Cooperativa, Registro.id_cooperative == Cooperativa.id_cooperative)
+        .filter(Registro.year == year)
     )
+    
+    if cooperativa_nombre:
+        query = query.filter(Cooperativa.name == cooperativa_nombre)
+    elif category:
+        query = query.filter(Cooperativa.category == category)
+    
     return query.all()
 
 
@@ -49,6 +61,6 @@ def get_registros_filtrados(
     db: Session = Depends(get_db)
 ):
     query = db.query(Registro)
-    query = query.filter(Registro.ID_cooperativa == cooperativa_id)
-    query = query.filter(Registro.ano == year)
+    query = query.filter(Registro.id_cooperative == cooperativa_id)
+    query = query.filter(Registro.year == year)
     return query.all()

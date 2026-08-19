@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Header from "../../components/header";
 import { pesoIndicadores } from "../../constants/camelWeights";
 import "./RankingCamel.css";
@@ -10,6 +10,7 @@ const RankingCamel = () => {
   const [ranking, setRanking] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [busqueda, setBusqueda] = useState("");  // 🔍 Estado para la búsqueda
 
   // Normalizamos los pesos igual que en CamelValue
   const mapeoIndicadorPeso = {};
@@ -94,6 +95,11 @@ const RankingCamel = () => {
   const promedio = (valores) =>
     valores.length > 0 ? valores.reduce((a, b) => a + b, 0) / valores.length : 0;
 
+  // 🔍 Filtrar ranking por búsqueda
+  const rankingFiltrado = ranking.filter((coop) =>
+    coop.nombre.toLowerCase().includes(busqueda.toLowerCase())
+  );
+
 return (
     <div className="ranking-container">
       <Header title="Ranking CAMEL - Top 10" />
@@ -110,6 +116,17 @@ return (
           </select>
         </label>
         <button onClick={obtenerRanking}>Calcular Ranking</button>
+
+        {/* 🔍 Buscador de cooperativas */}
+        {ranking.length > 0 && (
+          <input
+            type="text"
+            placeholder="🔍 Buscar cooperativa..."
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            className="buscar-input"
+          />
+        )}
       </div>
 
       {loading && <p className="loading">⏳ Calculando ranking...</p>}
@@ -125,21 +142,26 @@ return (
             </tr>
           </thead>
           <tbody>
-            {ranking.map((coop, index) => (
-              <tr key={coop.nombre} className={`rank-${index + 1}`}>
-                <td>{index + 1}</td>
-                <td>{coop.nombre}</td>
-                <td>{coop.promedioAnual.toFixed(3)}</td>
+            {rankingFiltrado.length > 0 ? (
+              rankingFiltrado.map((coop, index) => (
+                <tr key={coop.nombre} className={`rank-${index + 1}`}>
+                  <td>{index + 1}</td>
+                  <td>{coop.nombre}</td>
+                  <td>{coop.promedioAnual.toFixed(3)}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="3" style={{ textAlign: 'center', color: '#999' }}>
+                  ❌ No se encontraron cooperativas que coincidan con "{busqueda}"
+                </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       )}
     </div>
   );
 };
-
-const thStyle = { border: "1px solid #ccc", padding: "8px", background: "#eee" };
-const tdStyle = { border: "1px solid #ccc", padding: "8px" };
 
 export default RankingCamel;

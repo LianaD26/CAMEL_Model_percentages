@@ -1,1 +1,8 @@
-DATABASE_URL = "mysql+mysqlconnector://readonly:lectura_segura@camel-model25-limadio-5956.j.aivencloud.com:16156/camel_model?ssl_ca=/ruta/al/ca.pem"
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# PostgreSQL Neon Connection
+# IMPORTANTE: Configura DATABASE_URL en el archivo .env
+DATABASE_URL = os.getenv("DATABASE_URL")

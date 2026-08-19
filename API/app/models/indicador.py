@@ -1,9 +1,9 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey
 from app.database import Base
 
 class Indicador(Base):
-    __tablename__ = "indicador"
+    __tablename__ = "camel_indicator"
 
-    ID_indicador = Column(Integer, primary_key=True, index=True)
-    ID_camel = Column(Integer, ForeignKey("camel.ID_camel"), index=True)
-    nombre = Column(String(250), index=True)
+    id_indicator = Column(Integer, primary_key=True, index=True)
+    id_camel = Column(Integer, ForeignKey("camel_level.id_camel"), index=True)
+    name = Column(String(250), index=True)

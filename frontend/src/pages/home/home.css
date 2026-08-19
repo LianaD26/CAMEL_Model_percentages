@@ -7,19 +7,123 @@
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     margin-bottom: 2rem;
-    text-align: center;
 }
 
 .info-display h3 {
     margin: 0.5rem 0;
     color: #001F3F;
     font-weight: bold;
+    text-align: center;
 }
 
 .info-display p {
     margin: 0.5rem 0 0 0;
     color: #666;
     font-size: 0.9rem;
+    text-align: center;
+}
+
+/* Contenedor de filtros */
+.filters-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+/* Grupo individual de filtro */
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.filter-group label {
+    font-weight: 600;
+    color: #001F3F;
+    font-size: 14px;
+}
+
+.filter-group select {
+    padding: 10px 12px;
+    border: 2px solid #dee2e6;
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: white;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-group select:hover:not(:disabled) {
+    border-color: #001F3F;
+    background-color: #f0f4f8;
+}
+
+.filter-group select:focus {
+    outline: none;
+    border-color: #0066cc;
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+
+.filter-group select:disabled {
+    background-color: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+/* Botón de búsqueda */
+.search-button {
+    padding: 10px 24px;
+    background-color: #001F3F;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 140px;
+    text-align: center;
+}
+
+.search-button:hover:not(:disabled) {
+    background-color: #003d66;
+    box-shadow: 0 4px 12px rgba(0, 31, 63, 0.4);
+    transform: translateY(-2px);
+}
+
+.search-button:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 31, 63, 0.2);
+}
+
+.search-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Mensajes de estado */
+.warning-message {
+    padding: 12px;
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 6px;
+    color: #856404;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.loading-message {
+    padding: 12px;
+    background-color: #d1ecf1;
+    border: 1px solid #bee5eb;
+    border-radius: 6px;
+    color: #0c5460;
+    font-size: 14px;
+    margin-top: 10px;
 }
 
 .info-display .btn-consultar {
@@ -139,4 +243,74 @@
 .riesgo-bajo {
     background-color: #44aa44 !important;
     font-weight: bold;
+}
+
+/* ======== BUSCADOR DE COOPERATIVAS ======== */
+.cooperativa-filter-container {
+    display: flex;
+    align-items: stretch;
+    border: 2px solid #dee2e6;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: white;
+    transition: all 0.3s ease;
+}
+
+.cooperativa-filter-container:hover {
+    border-color: #001F3F;
+    box-shadow: 0 2px 8px rgba(0, 31, 63, 0.1);
+}
+
+.cooperativa-filter-container:focus-within {
+    border-color: #0066cc;
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+
+.buscar-cooperativa {
+    flex: 0 1 auto;
+    padding: 10px 12px;
+    border: none;
+    background-color: transparent;
+    color: #333;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    min-width: 150px;
+}
+
+.buscar-cooperativa:focus {
+    outline: none;
+}
+
+.buscar-cooperativa:disabled {
+    background-color: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+.buscar-cooperativa::placeholder {
+    color: #999;
+}
+
+.cooperativa-filter-container select {
+    flex: 1;
+    padding: 10px 12px;
+    border: none;
+    border-left: 1px solid #dee2e6;
+    background-color: transparent;
+    color: #333;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cooperativa-filter-container select:focus {
+    outline: none;
+}
+
+.cooperativa-filter-container select:disabled {
+    background-color: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.65;
 }

@@ -1,10 +1,42 @@
 API/app/config.py
 **/__pycache__/
-
-tablas/data_historico/*
+#tablas/**/*.csv
+tablas/data_historico/
 frontend/.env
+API/.env
+BD/.env
 **/.vscode/
 
-# Tablas que superan los 100MB de subida a GitHub
+# ========================================
+# ARCHIVOS DE DATOS Y RESULTADOS
+# ========================================
+
+# Archivos CSV en TODAS las ubicaciones
 tablas/*.csv
-tablas/*.xlsx
+tablas/**/*.csv
+BD/*.csv
+
+# Archivos Excel en TODAS las ubicaciones
+*.xlsx
+*.xls
+tablas/**/*.xlsx
+tablas/**/*.xls
+
+# Archivos JSON de datos
+API/data/*.json
+tablas/**/*.json
+
+# Archivos de texto en tablas
+tablas/*.txt
+tablas/**/*.txt
+
+# Carpetas de datos y resultados
+tablas/camel/resultado_CAMEL/
+tablas/percentiles_y_rangos/
+tablas/data_historico/
+
+# Otros archivos de datos que puedan estar en tablas
+tablas/*.dat
+tablas/**/*.dat
+tablas/*.tsv
+tablas/**/*.tsv

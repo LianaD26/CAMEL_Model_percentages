@@ -139,3 +139,430 @@
 .evaluar-modelo-button:hover {
     background-color: #3498db;
 }
+
+/* ========== NUEVOS ESTILOS PARA PCA ========== */
+
+.pca-section {
+    margin: 30px 0;
+    padding: 20px;
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border-radius: 12px;
+    border: 2px solid #1976d2;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pca-section h2 {
+    color: #0d47a1;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.pca-selector {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    align-items: center;
+    padding: 15px;
+    background-color: white;
+    border-radius: 8px;
+    border: 1px solid #64b5f6;
+}
+
+.pca-selector label {
+    font-weight: bold;
+    color: #0d47a1;
+    min-width: 150px;
+}
+
+.pca-selector select {
+    flex: 1;
+    padding: 10px 12px;
+    border: 2px solid #64b5f6;
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: white;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+.pca-selector select:hover {
+    border-color: #1976d2;
+}
+
+.pca-selector select:focus {
+    outline: none;
+    border-color: #0d47a1;
+    box-shadow: 0 0 8px rgba(13, 71, 161, 0.2);
+}
+
+.pca-info {
+    margin: 20px 0;
+    padding: 15px;
+    background-color: white;
+    border-radius: 8px;
+    border-left: 4px solid #1976d2;
+}
+
+.pca-info h3 {
+    color: #0d47a1;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.pca-info p {
+    color: #424242;
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.tabla-pca-section {
+    margin: 20px 0;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    border: 1px solid #64b5f6;
+}
+
+.tabla-pca-section h3 {
+    color: #0d47a1;
+    margin-bottom: 15px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.calificaciones-section {
+    margin: 30px 0;
+    padding: 20px;
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    border-radius: 12px;
+    border: 2px solid #7b1fa2;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.calificaciones-section h2 {
+    color: #4a148c;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.filtros-cooperativa {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: white;
+    border-radius: 8px;
+    border: 1px solid #ce93d8;
+}
+
+.filtro-grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.filtro-grupo label {
+    font-weight: bold;
+    color: #4a148c;
+    font-size: 14px;
+}
+
+.filtro-grupo select {
+    padding: 10px 12px;
+    border: 2px solid #ce93d8;
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: white;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+.filtro-grupo select:hover {
+    border-color: #7b1fa2;
+}
+
+.filtro-grupo select:focus {
+    outline: none;
+    border-color: #4a148c;
+    box-shadow: 0 0 8px rgba(75, 20, 140, 0.2);
+}
+
+.filtro-grupo select:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    background-color: #f5f5f5;
+}
+
+.tabla-calificaciones-section,
+.tabla-camel-section {
+    margin: 20px 0;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    border: 1px solid #ce93d8;
+}
+
+.tabla-calificaciones-section h3,
+.tabla-camel-section h3 {
+    color: #4a148c;
+    margin-bottom: 15px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* ========== ESTILOS PARA PERCENTILES ========== */
+
+.percentiles-section {
+    margin: 30px 0;
+    padding: 20px;
+    background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+    border-radius: 12px;
+    border: 2px solid #f57c00;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.percentiles-section h2 {
+    color: #bf360c;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.percentiles-selector {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    align-items: center;
+    padding: 15px;
+    background-color: white;
+    border-radius: 8px;
+    border: 1px solid #ffb74d;
+}
+
+.percentiles-selector label {
+    font-weight: bold;
+    color: #bf360c;
+    min-width: 200px;
+}
+
+.percentiles-selector select {
+    flex: 1;
+    padding: 10px 12px;
+    border: 2px solid #ffb74d;
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: white;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+.percentiles-selector select:hover {
+    border-color: #f57c00;
+}
+
+.percentiles-selector select:focus {
+    outline: none;
+    border-color: #bf360c;
+    box-shadow: 0 0 8px rgba(191, 54, 12, 0.2);
+}
+
+.percentiles-info {
+    margin: 20px 0;
+    padding: 15px;
+    background-color: white;
+    border-radius: 8px;
+    border-left: 4px solid #f57c00;
+}
+
+.percentiles-info h3 {
+    color: #bf360c;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.percentiles-info p {
+    color: #424242;
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.percentiles-tablas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.percentiles-tablas-agrupadas {
+    margin-top: 20px;
+}
+
+.categoria-camel {
+    margin-bottom: 40px;
+    padding: 20px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #f5f5f5 0%, #fafafa 100%);
+}
+
+.categoria-titulo {
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    border-radius: 6px;
+    background-color: #1F4E5F;
+    color: #FFFFFF;
+    font-size: 1.4em;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.categoria-capital,
+.categoria-assets,
+.categoria-managerial,
+.categoria-earnings,
+.categoria-liquidity {
+    /* Todos usan el mismo estilo */
+}
+
+.tabla-percentil-indicador {
+    background-color: white;
+    border-radius: 8px;
+    border: 1px solid #ffb74d;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.tabla-percentil-indicador h3 {
+    color: #bf360c;
+    margin-bottom: 12px;
+    font-weight: bold;
+    text-align: center;
+    font-size: 0.95em;
+    border-bottom: 2px solid #ffb74d;
+    padding-bottom: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.tabla-rangos {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.tabla-rangos thead {
+    background-color: #f57c00;
+    color: white;
+}
+
+.tabla-rangos th {
+    padding: 10px;
+    text-align: left;
+    font-weight: bold;
+    border: 1px solid #e65100;
+}
+
+.tabla-rangos td {
+    padding: 10px;
+    border: 1px solid #ffe0b2;
+    text-align: left;
+}
+
+.tabla-rangos tbody tr:hover {
+    background-color: #fff9c4;
+}
+
+.tabla-rangos tbody tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+.tabla-rangos .calificacion-1 {
+    background-color: #ffcdd2;
+    font-weight: bold;
+    text-align: center;
+    color: #c62828;
+}
+
+.tabla-rangos .calificacion-2 {
+    background-color: #f8bbd9;
+    font-weight: bold;
+    text-align: center;
+    color: #ad1457;
+}
+
+.tabla-rangos .calificacion-3 {
+    background-color: #f48fb1;
+    font-weight: bold;
+    text-align: center;
+    color: #880e4f;
+}
+
+.tabla-rangos .calificacion-4 {
+    background-color: #ffccbc;
+    font-weight: bold;
+    text-align: center;
+    color: #d84315;
+}
+
+.tabla-rangos .calificacion-5 {
+    background-color: #ffe0b2;
+    font-weight: bold;
+    text-align: center;
+    color: #bf360c;
+}
+
+.tabla-rangos .calificacion-6 {
+    background-color: #fff9c4;
+    font-weight: bold;
+    text-align: center;
+    color: #f57f17;
+}
+
+.tabla-rangos .calificacion-7 {
+    background-color: #e6ee9c;
+    font-weight: bold;
+    text-align: center;
+    color: #558b2f;
+}
+
+.tabla-rangos .calificacion-8 {
+    background-color: #c8e6c9;
+    font-weight: bold;
+    text-align: center;
+    color: #1b5e20;
+}
+
+.tabla-rangos .calificacion-9 {
+    background-color: #a5d6a7;
+    font-weight: bold;
+    text-align: center;
+    color: #1b5e20;
+}
+
+.tabla-rangos .calificacion-10 {
+    background-color: #81c784;
+    font-weight: bold;
+    text-align: center;
+    color: #1b5e20;
+}
+
+.indicador-inverso {
+    background-color: #ffcdd2;
+    color: #c62828;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75em;
+    font-weight: bold;
+    border: 1px solid #c62828;
+}
+

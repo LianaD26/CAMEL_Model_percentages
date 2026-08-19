@@ -18,9 +18,8 @@ const Menu = () => {
             
             {isOpen && (
                 <ul className="menu-list">
-                    <li><Link to="/">IRL y Solvencia</Link></li>
-                    <li><Link to="/home">Home</Link></li>
-                    <li><Link to="/camels_value">Valor CAMEL</Link></li>
+                    <li><Link to="/home">Consulta de Indicadores CAMEL</Link></li>
+                    <li><Link to="/camels_value">Resultado PCA y Rangos de Calificación Percentiles</Link></li>
                     <li><Link to="/ranking">Salud Financiera</Link></li>
                 </ul>
             )}
