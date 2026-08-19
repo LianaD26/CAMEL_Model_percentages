@@ -163,6 +163,8 @@ def populate_camel_records(cursor, conn, csv_file_path: str) -> dict:
 def populate_cooperatives(cursor, conn, csv_file_path: str ) -> dict:
     cooperatives_df = pd.read_csv(csv_file_path)
     cooperatives_uniques_df=cooperatives_df[['ID_cooperativa','categoria']].drop_duplicates()
+    # Las cooperativas "Top 4" se guardan como "Megas"
+    cooperatives_uniques_df['categoria'] = cooperatives_uniques_df['categoria'].replace('Top 4', 'Megas')
     cooperatives = [tuple(row) for row in cooperatives_uniques_df.values]
 
     stats = {
