@@ -1,7 +1,7 @@
 import React from 'react';
 import './Tablero.css';
 
-const Tablero = ({ columnas, datos, obtenerClaseRiesgo, onRiesgoChange }) => {
+const Tablero = ({ columnas, datos, obtenerClaseRiesgo, onRiesgoChange, onIndicadorClick }) => {
     // Lista de indicadores que NO deben multiplicarse por 100
     const indicadoresSinMultiplicar = [
         'Relación Solvencia',
@@ -73,6 +73,27 @@ const Tablero = ({ columnas, datos, obtenerClaseRiesgo, onRiesgoChange }) => {
 
     const renderCelda = (fila, columna, filaIndex) => {
         const valor = fila[columna];
+        
+        // Si es la columna de indicador y hay manejador, hacer clickeable
+        if (columna === 'Indicador' && onIndicadorClick) {
+            return (
+                <span
+                    style={{
+                        cursor: 'pointer',
+                        color: '#1976d2',
+                        fontWeight: '600',
+                        transition: 'opacity 0.2s ease'
+                    }}
+                    onClick={() => onIndicadorClick(fila.Indicador)}
+                    onMouseEnter={(e) => e.target.style.opacity = '0.7'}
+                    onMouseLeave={(e) => e.target.style.opacity = '1'}
+                    title="Click para ver gráfica de tiempo"
+                >
+                    {valor}
+                </span>
+            );
+        }
+        
         // Si es una columna de riesgo, hacer editable
         if (columna === 'Riesgo Alto' || columna === 'Riesgo Bajo') {
             return (

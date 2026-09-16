@@ -6,9 +6,12 @@ from app.models.camel import Camel
 from app.models.indicador import Indicador
 from app.models.pca_result import PcaResult
 from app.models.percentile_result import PercentileResult
+from app.models.camel_result import CamelResult
+from app.models.cooperativa import Cooperativa
 from app.schemas.camel import CamelSchema
 from app.schemas.pca_result import PcaResultadosResponse
 from app.schemas.percentile_result import PercentilResultadosResponse
+from app.schemas.camel_result import CamelResultadosResponse, CamelResultPorCategoria, CooperativaCAMELResult
 
 router = APIRouter(prefix="/camels", tags=["camels"])
 
@@ -94,3 +97,44 @@ def get_percentiles_resultados(db: Session = Depends(get_db)):
             "percentiles_por_categoria": por_categoria,
         }
     }
+
+
+@router.get("/resultados/ranking-json")
+def get_camel_resultados_ranking(db: Session = Depends(get_db)):
+    """Devuelve los resultados CAMEL por categoría con cooperativas y sus scores."""
+    
+    # Obtener todos los resultados CAMEL con info de cooperativa
+    filas = (
+        db.query(CamelResult, Cooperativa.name, Cooperativa.category)
+        .join(Cooperativa, CamelResult.id_cooperative == Cooperativa.id_cooperative)
+        .all()
+    )
+
+    # Agrupar por categoría
+    por_categoria = {}
+    
+    for camel, nombre_cooperativa, cat_coop in filas:
+        categoria = camel.category
+        
+        if categoria not in por_categoria:
+            por_categoria[categoria] = {
+                "categoria": categoria,
+                "cantidad_cooperativas": 0,
+                "cantidad_registros": 0,
+                "cooperativas": []
+            }
+        
+        por_categoria[categoria]["cooperativas"].append({
+            "id_cooperative": camel.id_cooperative,
+            "nombre_cooperativa": nombre_cooperativa,
+            "result": float(camel.result)
+        })
+    
+    # Calcular cantidad de cooperativas y registros por categoría
+    for categoria, datos in por_categoria.items():
+        datos["cantidad_cooperativas"] = len(datos["cooperativas"])
+        datos["cantidad_registros"] = len(datos["cooperativas"])
+        # Ordenar cooperativas por resultado descendente
+        datos["cooperativas"].sort(key=lambda x: x["result"], reverse=True)
+    
+    return {"datos": por_categoria}

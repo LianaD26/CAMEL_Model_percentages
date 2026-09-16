@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../../components/header';
 import Tablero from '../../components/tablero';
+import IndicatorChartModal from '../../components/IndicatorChartModal';
 import './home.css';
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -18,6 +19,10 @@ const Home = () => {
     const [anos, setAnos] = useState([]);
     const [loading, setLoading] = useState(false);
     const [filterError, setFilterError] = useState("");
+    
+    // Estados para el modal de gráfica
+    const [modalOpen, setModalOpen] = useState(false);
+    const [indicadorSeleccionado, setIndicadorSeleccionado] = useState(null);
 
     // Estados
     const [datos, setDatos] = useState(() => {
@@ -45,6 +50,12 @@ const Home = () => {
         };
         cargarAnos();
     }, []);
+
+    // Manejador para click en indicador
+    const handleIndicadorClick = (nombreIndicador) => {
+        setIndicadorSeleccionado(nombreIndicador);
+        setModalOpen(true);
+    };
 
     // Cargar cooperativas y extraer categorías únicas
     useEffect(() => {
@@ -488,6 +499,16 @@ const Home = () => {
                     datos={datos}
                     obtenerClaseRiesgo={obtenerClaseRiesgo}
                     onRiesgoChange={handleRiesgoChange}
+                    onIndicadorClick={handleIndicadorClick}
+                />
+                
+                {/* Modal de gráfica de indicador */}
+                <IndicatorChartModal
+                    isOpen={modalOpen}
+                    onClose={() => setModalOpen(false)}
+                    indicador={indicadorSeleccionado}
+                    cooperativa={cooperativa}
+                    categoria={categoria}
                 />
             </div>
         </div>

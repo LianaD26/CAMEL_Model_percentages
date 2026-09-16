@@ -12,7 +12,7 @@ from app.schemas.registro_completo import RegistroCompletoSchema
 router = APIRouter(prefix="/registros", tags=["registros"])
 
 @router.get(
-    "/completo",
+    "/completo/",
     response_model=List[RegistroCompletoSchema],
     operation_id="get_registros_completos_unico"
 )

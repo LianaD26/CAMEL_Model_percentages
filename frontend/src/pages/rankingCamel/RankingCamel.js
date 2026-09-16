@@ -1,164 +1,157 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../../components/header";
-import { pesoIndicadores } from "../../constants/camelWeights";
 import "./RankingCamel.css";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const RankingCamel = () => {
-  const [anio, setAnio] = useState(2024);
-  const [ranking, setRanking] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [resultados, setResultados] = useState(null);
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("General");
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [busqueda, setBusqueda] = useState("");  // 🔍 Estado para la búsqueda
+  const [busqueda, setBusqueda] = useState("");
 
-  // Normalizamos los pesos igual que en CamelValue
-  const mapeoIndicadorPeso = {};
-  Object.entries(pesoIndicadores).forEach(([indicador, peso]) => {
-    const nombreFormateado = indicador.replace(/_/g, " ").toUpperCase().trim();
-    mapeoIndicadorPeso[nombreFormateado] = peso > 1 ? peso / 100 : peso;
-  });
-
-  const obtenerRanking = async () => {
-    setLoading(true);
-    setError(null);
-    setRanking([]);
-
-    try {
-      // 1️⃣ Obtener todas las cooperativas
-      const resCoops = await fetch(`${API_URL}/cooperativas`);
-      const cooperativas = await resCoops.json();
-
-      const resultados = [];
-
-      // 2️⃣ Para cada cooperativa, obtener sus calificaciones y calcular CAMEL promedio anual
-      for (const coop of cooperativas) {
-        try {
-          const res = await fetch(
-            `${API_URL}/predictor/calificacion/${encodeURIComponent(coop.nombre)}?year=${anio}`
-          );
-
-          if (!res.ok) continue;
-
-          const data = await res.json();
-          const camelMensual = calcularCAMELMensual(data.calificaciones, mapeoIndicadorPeso);
-          const promedioAnual = promedio(camelMensual);
-
-          resultados.push({
-            nombre: coop.nombre,
-            promedioAnual,
-          });
-        } catch (err) {
-          console.warn(`Error con ${coop.nombre}:`, err);
+  // Cargar resultados al montar el componente
+  useEffect(() => {
+    const cargarResultados = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(`${API_URL}/camels/resultados/ranking-json`);
+        if (!response.ok) {
+          throw new Error("No se han calculado resultados CAMEL aún");
         }
+        const data = await response.json();
+        console.log("📊 Datos de resultados CAMEL:", data);
+        setResultados(data.datos);
+
+        // Establecer la primera categoría disponible
+        const categorias = Object.keys(data.datos);
+        if (categorias.length > 0) {
+          setCategoriaSeleccionada(categorias[0]);
+        }
+      } catch (err) {
+        setError(err.message);
+        console.error("❌ Error cargando resultados CAMEL:", err);
+      } finally {
+        setLoading(false);
       }
+    };
 
-      // 3️⃣ Ordenar y seleccionar top 10
-      resultados.sort((a, b) => b.promedioAnual - a.promedioAnual);
-      setRanking(resultados.slice(0, 10));
-    } catch (err) {
-      console.error(err);
-      setError("No se pudo obtener el ranking.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    cargarResultados();
+  }, []);
 
-  // --- Función de cálculo CAMEL mensual ---
-  const calcularCAMELMensual = (calificacionesData, mapeoIndicadorPeso) => {
-    const valores = [];
+  // Obtener datos de la categoría seleccionada
+  const datosCategoria = resultados?.[categoriaSeleccionada];
 
-    for (let mes = 1; mes <= 12; mes++) {
-      let sumaCAMEL = 0;
-      let indicadoresValidos = 0;
+  // Filtrar cooperativas según búsqueda
+  const cooperativasFiltradas = datosCategoria?.cooperativas?.filter((coop) =>
+    coop.nombre_cooperativa.toLowerCase().includes(busqueda.toLowerCase())
+  ) || [];
 
-      Object.entries(calificacionesData).forEach(([indicador, meses]) => {
-        const nombreIndicador = indicador.replace(/_/g, " ").toUpperCase().trim();
-        const clavePeso = Object.keys(mapeoIndicadorPeso).find(
-          (k) => nombreIndicador.includes(k) || k.includes(nombreIndicador)
-        );
-        const peso = mapeoIndicadorPeso[clavePeso];
-        const calificacion = meses[mes] ?? meses[`Mes ${mes}`] ?? meses[String(mes)];
+  return (
+    <div className="ranking-camel-container">
+      <Header title="Ranking CAMEL - Clasificación de Cooperativas" />
 
-        if (peso !== undefined && !isNaN(calificacion)) {
-          sumaCAMEL += calificacion * peso;
-          indicadoresValidos++;
-        }
-      });
+      {loading && <p className="loading-message">⏳ Cargando resultados CAMEL...</p>}
 
-      if (indicadoresValidos > 0) valores.push(sumaCAMEL);
-    }
+      {error && (
+        <div className="error-message">
+          <p>⚠️ {error}</p>
+          <button className="retry-button" onClick={() => window.location.reload()}>
+            Reintentar
+          </button>
+        </div>
+      )}
 
-    return valores;
-  };
+      {resultados && (
+        <section className="ranking-section">
+          <h2>📊 Resultados CAMEL por Categoría</h2>
 
-  const promedio = (valores) =>
-    valores.length > 0 ? valores.reduce((a, b) => a + b, 0) / valores.length : 0;
+          {/* Selector de Categoría */}
+          <div className="categoria-selector">
+            <label>Seleccionar Categoría:</label>
+            <select
+              value={categoriaSeleccionada}
+              onChange={(e) => {
+                setCategoriaSeleccionada(e.target.value);
+                setBusqueda(""); // Limpiar búsqueda al cambiar categoría
+              }}
+            >
+              {Object.keys(resultados).map((categoria) => (
+                <option key={categoria} value={categoria}>
+                  {categoria}
+                </option>
+              ))}
+            </select>
+          </div>
 
-  // 🔍 Filtrar ranking por búsqueda
-  const rankingFiltrado = ranking.filter((coop) =>
-    coop.nombre.toLowerCase().includes(busqueda.toLowerCase())
-  );
+          {/* Información de la Categoría */}
+          {datosCategoria && (
+            <>
+              <div className="categoria-info">
+                <div className="info-item">
+                  <span className="info-label">Categoría:</span>
+                  <span className="info-value">{datosCategoria.categoria}</span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">Cantidad de Cooperativas:</span>
+                  <span className="info-value">{datosCategoria.cantidad_cooperativas}</span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">Cantidad de Registros:</span>
+                  <span className="info-value">{datosCategoria.cantidad_registros}</span>
+                </div>
+              </div>
 
-return (
-    <div className="ranking-container">
-      <Header title="Ranking CAMEL - Top 10" />
-
-      <div className="controls">
-        <label>
-          Año:&nbsp;
-          <select value={anio} onChange={(e) => setAnio(Number(e.target.value))}>
-            {[2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025].map((a) => (
-              <option key={a} value={a}>
-                {a}
-              </option>
-            ))}
-          </select>
-        </label>
-        <button onClick={obtenerRanking}>Calcular Ranking</button>
-
-        {/* 🔍 Buscador de cooperativas */}
-        {ranking.length > 0 && (
-          <input
-            type="text"
-            placeholder="🔍 Buscar cooperativa..."
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
-            className="buscar-input"
-          />
-        )}
-      </div>
-
-      {loading && <p className="loading">⏳ Calculando ranking...</p>}
-      {error && <p className="error">❌ {error}</p>}
-
-      {!loading && ranking.length > 0 && (
-        <table className="ranking-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Cooperativa</th>
-              <th>Promedio CAMEL</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rankingFiltrado.length > 0 ? (
-              rankingFiltrado.map((coop, index) => (
-                <tr key={coop.nombre} className={`rank-${index + 1}`}>
-                  <td>{index + 1}</td>
-                  <td>{coop.nombre}</td>
-                  <td>{coop.promedioAnual.toFixed(3)}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="3" style={{ textAlign: 'center', color: '#999' }}>
-                  ❌ No se encontraron cooperativas que coincidan con "{busqueda}"
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              {/* Tabla de Cooperativas */}
+              <div className="cooperativas-table-section">
+                <div className="tabla-header">
+                  <h3>Cooperativas - Resultado CAMEL</h3>
+                  <div className="search-box">
+                    <span className="search-icon">🔍</span>
+                    <input
+                      type="text"
+                      placeholder="Buscar cooperativa..."
+                      value={busqueda}
+                      onChange={(e) => setBusqueda(e.target.value)}
+                      className="search-input"
+                    />
+                  </div>
+                </div>
+                <p className="resultados-info">
+                  Mostrando {cooperativasFiltradas.length} de {datosCategoria.cooperativas.length} cooperativas
+                </p>
+                {cooperativasFiltradas.length > 0 ? (
+                  <table className="cooperativas-table">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Cooperativa</th>
+                        <th>Resultado CAMEL</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {cooperativasFiltradas.map((coop, index) => (
+                        <tr key={coop.id_cooperative}>
+                          <td>{index + 1}</td>
+                          <td>{coop.nombre_cooperativa}</td>
+                          <td>{coop.result.toFixed(2)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <p className="no-data-message">
+                    {busqueda
+                      ? `📭 No se encontraron cooperativas que coincidan con "${busqueda}"`
+                      : "📭 No hay cooperativas para esta categoría"}
+                  </p>
+                )}
+              </div>
+            </>
+          )}
+        </section>
       )}
     </div>
   );
