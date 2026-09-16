@@ -148,3 +148,21 @@ CREATE TABLE percentile_result (
     CONSTRAINT uq_percentile_result
         UNIQUE(category, id_indicator)
 );
+
+CREATE TABLE camel_result (
+    id_camel_result SERIAL PRIMARY KEY,
+
+    id_cooperative INT NOT NULL,
+
+    category VARCHAR(100) NOT NULL,
+
+    result NUMERIC(20,10) NOT NULL,
+
+    CONSTRAINT fk_camel_result_cooperative
+        FOREIGN KEY (id_cooperative)
+        REFERENCES cooperative(id_cooperative)
+        ON DELETE CASCADE,
+
+    CONSTRAINT uq_camel_result
+        UNIQUE(id_cooperative, category)
+);

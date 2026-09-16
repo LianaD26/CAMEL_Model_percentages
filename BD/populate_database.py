@@ -6,9 +6,9 @@ from populate_functions import populate_table_cooperative, populate_camel_record
 
 # Obtener la ruta absoluta del archivo CSV
 current_dir = os.path.dirname(os.path.abspath(__file__))
-csv_path = os.path.join(current_dir, 'Datos_2013_2025_cooperativas.csv')
+#csv_path = os.path.join(current_dir, 'Datos_2013_2025_cooperativas.csv')
 camel_csv_path = os.path.join(current_dir, 'Registros_CAMEL_sin_solvencia_categorizados.csv')
-data = pd.read_csv(csv_path)
+#data = pd.read_csv(csv_path)
 
 load_dotenv(dotenv_path=os.path.join(current_dir, '.env'))
 
