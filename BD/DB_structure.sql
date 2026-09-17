@@ -130,15 +130,10 @@ CREATE TABLE percentile_result (
 
     id_indicator INT NOT NULL,
 
-    p10 NUMERIC(20,10),
     p20 NUMERIC(20,10),
-    p30 NUMERIC(20,10),
     p40 NUMERIC(20,10),
-    p50 NUMERIC(20,10),
     p60 NUMERIC(20,10),
-    p70 NUMERIC(20,10),
     p80 NUMERIC(20,10),
-    p90 NUMERIC(20,10),
 
     CONSTRAINT fk_percentile_result_indicator
         FOREIGN KEY (id_indicator)

@@ -51,18 +51,36 @@ def get_pca_resultados(db: Session = Depends(get_db)):
     return {"datos": {"ultimoCalculo": {"resultados": resultados}}}
 
 
-@router.get("/percentiles/resultados-json", response_model=PercentilResultadosResponse)
-def get_percentiles_resultados(db: Session = Depends(get_db)):
-    """Devuelve los percentiles P10-P90 precalculados por categoría desde percentile_result."""
+@router.get(
+    "/percentiles/resultados-json",
+    response_model=PercentilResultadosResponse
+)
+def get_percentiles_resultados(
+    db: Session = Depends(get_db)
+):
+    """Devuelve los percentiles P20, P40, P60 y P80 precalculados por categoría."""
+
     filas = (
-        db.query(PercentileResult, Indicador.name, Camel.name)
-        .join(Indicador, PercentileResult.id_indicator == Indicador.id_indicator)
-        .join(Camel, Indicador.id_camel == Camel.id_camel)
+        db.query(
+            PercentileResult,
+            Indicador.name,
+            Camel.name
+        )
+        .join(
+            Indicador,
+            PercentileResult.id_indicator == Indicador.id_indicator
+        )
+        .join(
+            Camel,
+            Indicador.id_camel == Camel.id_camel
+        )
         .all()
     )
 
     por_categoria = {}
+
     for pct, nombre_indicador, categoria_camel in filas:
+
         categoria = por_categoria.setdefault(
             pct.category,
             {
@@ -71,25 +89,25 @@ def get_percentiles_resultados(db: Session = Depends(get_db)):
                 "percentiles": {},
             },
         )
+
         categoria["percentiles"][str(pct.id_indicator)] = {
             "nombre_indicador": nombre_indicador,
             "categoria_camel": categoria_camel,
-            "p10": float(pct.p10) if pct.p10 is not None else None,
-            "p20": float(pct.p20) if pct.p20 is not None else None,
-            "p30": float(pct.p30) if pct.p30 is not None else None,
-            "p40": float(pct.p40) if pct.p40 is not None else None,
-            "p50": float(pct.p50) if pct.p50 is not None else None,
-            "p60": float(pct.p60) if pct.p60 is not None else None,
-            "p70": float(pct.p70) if pct.p70 is not None else None,
-            "p80": float(pct.p80) if pct.p80 is not None else None,
-            "p90": float(pct.p90) if pct.p90 is not None else None,
+
+            "p20": float(pct.p20),
+            "p40": float(pct.p40),
+            "p60": float(pct.p60),
+            "p80": float(pct.p80),
         }
 
-    generales = por_categoria.pop("General", {
-        "cantidad_cooperativas": 0,
-        "cantidad_registros": 0,
-        "percentiles": {},
-    })
+    generales = por_categoria.pop(
+        "General",
+        {
+            "cantidad_cooperativas": 0,
+            "cantidad_registros": 0,
+            "percentiles": {},
+        }
+    )
 
     return {
         "datos": {

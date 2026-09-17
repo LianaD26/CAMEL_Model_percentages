@@ -184,55 +184,89 @@ const CamelValue = () => {
     // 🔹 Convertir percentiles a rangos de calificación agrupados por categoría CAMEL
     const construirTablasPercentiles = () => {
         const percentiles = getPercentilesSeleccionado();
-        
+
         // Crear objeto con indicadores agrupados por categoría CAMEL
         const tablasPorCategoria = {};
         const ordenCAMEL = ["Capital", "Assets", "Managerial", "Earnings", "Liquidity"];
-        
+
         // Inicializar arrays para cada categoría CAMEL
         ordenCAMEL.forEach(cat => {
             tablasPorCategoria[cat] = [];
         });
-        
-        // Procesar cada indicador enriquecido
+
+        // Procesar cada indicador
         Object.entries(percentiles).forEach(([idIndicador, datosPct]) => {
-            // datosPct tiene: nombre_indicador, categoria_camel, p10, p20, ..., p90
-            const nombreIndicador = datosPct.nombre_indicador || `Indicador ${idIndicador}`;
-            const categoriaCAMEL = datosPct.categoria_camel || "Desconocida";
-            const esInverso = INDICADORES_INVERSOS.includes(nombreIndicador);
-            
-            // Los rangos SIEMPRE en el mismo orden (P10, P20, ..., P90)
+
+            const nombreIndicador =
+                datosPct.nombre_indicador || `Indicador ${idIndicador}`;
+
+            const categoriaCAMEL =
+                datosPct.categoria_camel || "Desconocida";
+
+            const esInverso =
+                INDICADORES_INVERSOS.includes(nombreIndicador);
+
+            // ==========================================
+            // RANGOS BASADOS EN P20, P40, P60 Y P80
+            // ==========================================
             const rangosBase = [
-                { minVal: -Infinity, maxVal: datosPct.p10, calificacion: 1 },
-                { minVal: datosPct.p10, maxVal: datosPct.p20, calificacion: 2 },
-                { minVal: datosPct.p20, maxVal: datosPct.p30, calificacion: 3 },
-                { minVal: datosPct.p30, maxVal: datosPct.p40, calificacion: 4 },
-                { minVal: datosPct.p40, maxVal: datosPct.p50, calificacion: 5 },
-                { minVal: datosPct.p50, maxVal: datosPct.p60, calificacion: 6 },
-                { minVal: datosPct.p60, maxVal: datosPct.p70, calificacion: 7 },
-                { minVal: datosPct.p70, maxVal: datosPct.p80, calificacion: 8 },
-                { minVal: datosPct.p80, maxVal: datosPct.p90, calificacion: 9 },
-                { minVal: datosPct.p90, maxVal: Infinity, calificacion: 10 },
+                {
+                    minVal: -Infinity,
+                    maxVal: datosPct.p20,
+                    calificacion: 1
+                },
+                {
+                    minVal: datosPct.p20,
+                    maxVal: datosPct.p40,
+                    calificacion: 2
+                },
+                {
+                    minVal: datosPct.p40,
+                    maxVal: datosPct.p60,
+                    calificacion: 3
+                },
+                {
+                    minVal: datosPct.p60,
+                    maxVal: datosPct.p80,
+                    calificacion: 4
+                },
+                {
+                    minVal: datosPct.p80,
+                    maxVal: Infinity,
+                    calificacion: 5
+                }
             ];
-            
-            // Para indicadores inversos: invertir SOLO la calificación (10, 9, 8, ..., 1)
+
+            // Para indicadores inversos:
+            // 1 → 5
+            // 2 → 4
+            // 3 → 3
+            // 4 → 2
+            // 5 → 1
             const rangos = esInverso
-                ? rangosBase.map(r => ({ ...r, calificacion: 11 - r.calificacion }))
+                ? rangosBase.map(r => ({
+                    ...r,
+                    calificacion: 6 - r.calificacion
+                }))
                 : rangosBase;
-            
+
             // Agregar a la categoría CAMEL correspondiente
             if (tablasPorCategoria[categoriaCAMEL]) {
+
                 tablasPorCategoria[categoriaCAMEL].push({
                     indicador: nombreIndicador,
                     rangos: rangos,
                     percentiles: datosPct,
                     esInverso: esInverso
                 });
+
             } else {
+
                 // Si la categoría no existe, ponerla en Desconocida
                 if (!tablasPorCategoria["Desconocida"]) {
                     tablasPorCategoria["Desconocida"] = [];
                 }
+
                 tablasPorCategoria["Desconocida"].push({
                     indicador: nombreIndicador,
                     rangos: rangos,
@@ -241,7 +275,7 @@ const CamelValue = () => {
                 });
             }
         });
-        
+
         return tablasPorCategoria;
     };
 

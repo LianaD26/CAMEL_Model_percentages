@@ -33,6 +33,7 @@ def populate_camel_records(cursor, conn, csv_file_path: str) -> dict:
     # 1. Leer CSV
     print("\n1. Leyendo CSV...")
     df = pd.read_csv(csv_file_path)
+    df.loc[df["ID_indicador"] == "Indicador de Riesgo de Liquidez - IRL", "ID_indicador"] = "Activos líquidos ampliados / depósitos a corto plazo"
     print(f"   ✓ CSV leído: {len(df)} registros")
     
     # 2. Obtener mapeos de la BD
